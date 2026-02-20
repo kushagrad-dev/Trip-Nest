@@ -123,7 +123,7 @@
   /* SEARCH POSITION FIX */
   @media (max-width:767px){
     .navbar .flex-grow-1{
-      margin-top:14px;
+      margin: top 14px;
     }
   }
 
@@ -133,6 +133,16 @@
 
   .navbar.scrolled .flex-grow-1{
     background:#ffffff;
+  }
+
+  /* MOBILE DROPDOWN BACKGROUND FIX */
+  @media (max-width:767px){
+    .navbar-collapse{
+      background:#ffffff;
+      padding:12px;
+      border-radius:0 0 14px 14px;
+      box-shadow:0 8px 20px rgba(0,0,0,0.08);
+    }
   }
 </style>
 
