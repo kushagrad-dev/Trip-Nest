@@ -77,7 +77,7 @@ router.get("/search", async (req,res)=>{
     return res.redirect("/listings");
   }
 
-  const listings = await Listing.find({});
+  const listings = await Listing.find({}).lean();
 
   const fuse = new Fuse(listings,{
     keys:["title","location","country","description"],
@@ -101,7 +101,7 @@ router.route("/:id")
 
 // ---------------- ERROR LOGGER ----------------
 router.use((err, req, res, next) => {
-  console.error("\n🚨 LISTING ROUTE ERROR");
+  console.error("\nLISTING ROUTE ERROR");
   console.error("Route:", req.originalUrl);
   console.error("Method:", req.method);
   console.error("Params:", req.params);
