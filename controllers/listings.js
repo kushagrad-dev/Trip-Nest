@@ -106,7 +106,8 @@ module.exports.renderEditForm = async (req, res) => {
     return res.redirect("/listings");
   }
 
-  const originalImageUrl = listing.image.url;
+  const originalImageUrl = listing.image?.url || "";
+  res.locals.originalImageUrl = originalImageUrl;
 
   res.render("listings/edit", {
     listing,
