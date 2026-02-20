@@ -7,7 +7,6 @@ module.exports.index = async (req, res) => {
 
   let query = {};
 
-  // SEARCH
   if (search) {
     query.$or = [
       { title: { $regex: search, $options: "i" } },
@@ -16,25 +15,21 @@ module.exports.index = async (req, res) => {
     ];
   }
 
-  // CATEGORY
   if (category) {
     query.category = category;
   }
 
-  // PRICE
   if (minPrice || maxPrice) {
     query.price = {};
     if (minPrice) query.price.$gte = Number(minPrice);
     if (maxPrice) query.price.$lte = Number(maxPrice);
   }
 
-  // SORT
   let sortOption = {};
   if (sort === "low") sortOption.price = 1;
   else if (sort === "high") sortOption.price = -1;
   else if (sort === "new") sortOption._id = -1;
 
-  // PAGINATION
   const limit = 9;
   const currentPage = Math.max(parseInt(page) || 1, 1);
   const skip = (currentPage - 1) * limit;
@@ -107,7 +102,6 @@ module.exports.renderEditForm = async (req, res) => {
   }
 
   const originalImageUrl = listing.image?.url || "";
-  res.locals.originalImageUrl = originalImageUrl;
 
   res.render("listings/edit", {
     listing,
