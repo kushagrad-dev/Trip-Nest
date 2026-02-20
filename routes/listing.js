@@ -69,15 +69,6 @@ router.route("/")
 // NEW
 router.get("/new", isLoggedIn, (req,res,next)=>{console.log("➕ New listing form opened"); next();}, wrapAsync(listingController.renderNewForm));
 
-// EDIT
-router.get("/:id/edit", isLoggedIn, isOwner, (req,res,next)=>{console.log("📝 Edit form for", req.params.id); next();}, wrapAsync(listingController.renderEditForm));
-
-// SHOW + UPDATE + DELETE
-router.route("/:id")
-  .get((req,res,next)=>{console.log(" Show listing", req.params.id); next();}, wrapAsync(listingController.showListing))
-  .put(isLoggedIn, isOwner, uploadMiddleware, validateListing, (req,res,next)=>{console.log("✏️ Update listing", req.params.id); next();}, wrapAsync(listingController.updateListing))
-  .delete(isLoggedIn, isOwner, (req,res,next)=>{console.log("🗑 Delete listing", req.params.id); next();}, wrapAsync(listingController.deleteListing));
-
 // FUZZY SEARCH
 router.get("/search", async (req,res)=>{
   const { q } = req.query;
@@ -98,6 +89,15 @@ router.get("/search", async (req,res)=>{
 
   res.render("listings/index",{ allListings: matchedListings });
 });
+
+// EDIT
+router.get("/:id/edit", isLoggedIn, isOwner, (req,res,next)=>{console.log("📝 Edit form for", req.params.id); next();}, wrapAsync(listingController.renderEditForm));
+
+// SHOW + UPDATE + DELETE
+router.route("/:id")
+  .get((req,res,next)=>{console.log(" Show listing", req.params.id); next();}, wrapAsync(listingController.showListing))
+  .put(isLoggedIn, isOwner, uploadMiddleware, validateListing, (req,res,next)=>{console.log("✏️ Update listing", req.params.id); next();}, wrapAsync(listingController.updateListing))
+  .delete(isLoggedIn, isOwner, (req,res,next)=>{console.log("🗑 Delete listing", req.params.id); next();}, wrapAsync(listingController.deleteListing));
 
 // ---------------- ERROR LOGGER ----------------
 router.use((err, req, res, next) => {
