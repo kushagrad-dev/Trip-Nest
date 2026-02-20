@@ -14,6 +14,8 @@ router.use((req, res, next) => {
 const wrapAsync = require("../utils/wrapAsync.js");
 const { isLoggedIn, isOwner, validateListing } = require("../middleware.js");
 const listingController = require("../controllers/listings.js");
+const Listing = require("../models/listing.js");
+const Fuse = require("fuse.js");
 const multer = require("multer");
 const { storage } = require("../cloudConfig.js"); // cloudinary storage configuration
 
@@ -24,7 +26,7 @@ const upload = multer({
     if (file.mimetype.startsWith("image/")) {
       cb(null, true);
     } else {
-      console.error("❌ File rejected by multer. Invalid mimetype:", file.mimetype);
+      console.error(" File rejected by multer. Invalid mimetype:", file.mimetype);
       cb(new Error("Only image files are allowed"), false);
     }
   }
@@ -32,16 +34,16 @@ const upload = multer({
 
 // Safe multer wrapper to prevent crashes
 const uploadMiddleware = (req, res, next) => {
-  console.log("\n📤 Upload middleware triggered");
+  console.log("\nUpload middleware triggered");
 
   upload.single("listing[image]")(req, res, function (err) {
     if (err) {
-      console.error("❌ Multer Upload Error:", err);
+      console.error("Multer Upload Error:", err);
       console.error("Stack:", err.stack);
       return res.status(400).send(err.message || "File upload failed");
     }
 
-    console.log("✅ Upload passed");
+    console.log(" Upload passed");
     next();
   });
 };
@@ -50,13 +52,13 @@ const uploadMiddleware = (req, res, next) => {
 
 // EXPLORE (alias of listings index)
 router.get("/explore", (req,res,next)=>{
-  console.log("🧭 Explore route accessed");
+  console.log("Explore route accessed");
   next();
 }, wrapAsync(listingController.index));
 
 // INDEX + CREATE
 router.route("/")
-  .get((req,res,next)=>{console.log("📄 Listings index controller"); next();}, wrapAsync(listingController.index))
+  .get((req,res,next)=>{console.log(" Listings index controller"); next();}, wrapAsync(listingController.index))
   .post(
     isLoggedIn,
     uploadMiddleware,
@@ -72,9 +74,30 @@ router.get("/:id/edit", isLoggedIn, isOwner, (req,res,next)=>{console.log("📝 
 
 // SHOW + UPDATE + DELETE
 router.route("/:id")
-  .get((req,res,next)=>{console.log("🔎 Show listing", req.params.id); next();}, wrapAsync(listingController.showListing))
+  .get((req,res,next)=>{console.log(" Show listing", req.params.id); next();}, wrapAsync(listingController.showListing))
   .put(isLoggedIn, isOwner, uploadMiddleware, validateListing, (req,res,next)=>{console.log("✏️ Update listing", req.params.id); next();}, wrapAsync(listingController.updateListing))
   .delete(isLoggedIn, isOwner, (req,res,next)=>{console.log("🗑 Delete listing", req.params.id); next();}, wrapAsync(listingController.deleteListing));
+
+// FUZZY SEARCH
+router.get("/search", async (req,res)=>{
+  const { q } = req.query;
+
+  if(!q || q.trim()===""){
+    return res.redirect("/listings");
+  }
+
+  const listings = await Listing.find({});
+
+  const fuse = new Fuse(listings,{
+    keys:["title","location","country","description"],
+    threshold:0.4
+  });
+
+  const results = fuse.search(q);
+  const matchedListings = results.map(r=>r.item);
+
+  res.render("listings/index",{ allListings: matchedListings });
+});
 
 // ---------------- ERROR LOGGER ----------------
 router.use((err, req, res, next) => {

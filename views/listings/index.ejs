@@ -91,13 +91,13 @@
   }
 }
 </style>
-<!-- SEARCH + FILTER BAR -->
-<form method="GET" action="/listings" class="row g-2 mb-4 align-items-center">
+<!-- SEARCH / FILTER BAR -->
+<form method="GET" action="/listings/search" class="row g-2 mb-4 align-items-center">
 
   <div class="col-md-3 mt-4">
     <input
       type="text"
-      name="search"
+      name="q"
       class="form-control"
       placeholder="Search location or title..."
       value="<%= filters?.search || '' %>"
