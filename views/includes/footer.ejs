@@ -1,0 +1,25 @@
+<footer>
+    <div class ="f-info">
+        <div class="f-info-socials">
+            <i class="fa-brands fa-facebook"></i>
+            <i class="fa-brands fa-instagram"></i>
+            <i class="fa-brands fa-linkedin"></i>
+
+        </div>
+        <div class="f-info-brand"> &copy; TripNest Private Limited</div>
+        <div class ="f-info-links">
+            <a href="/privacy" > Privacy</a>
+            <a href="/terms"> Terms</a>
+        </div>
+    </div>
+</footer>
+
+<script>
+  console.log("Footer rendered successfully");
+
+  document.querySelectorAll('.f-info-links a').forEach(link => {
+    link.addEventListener('click', e => {
+      console.log("Footer link clicked:", e.target.getAttribute('href'));
+    });
+  });
+</script>

@@ -1,0 +1,4 @@
+.env
+node_modules/
+**/.DS_Store 
+#**/.DS_Store means even if .ds is present in any other file also then also don't push it inside the code

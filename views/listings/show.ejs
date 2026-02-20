@@ -1,0 +1,214 @@
+<% layout("/layouts/boilerplate") %>
+
+<script>
+  const mapToken = "<%= process.env.MAP_TOKEN %>";
+</script>
+
+<div class="listing-show-page">
+  <div class="row justify-content-center card-listing">
+    <div class="col-lg-8 col-md-10">
+
+      <!-- TITLE -->
+      <h3 class="text-center mb-4"><%= listing.title %></h3>
+
+      <!-- LISTING CARD -->
+      <div class="card border-0 shadow-none mb-3">
+        <img
+          src="<%= listing.image.url %>"
+          class="card-img-top show-img"
+          alt="listing_image"
+        >
+
+        <div class="card-body">
+          <p class="card-text">
+            <strong>Owner:</strong>
+            <i><%= listing.owner ? listing.owner.username : "Unknown" %></i>
+          </p>
+
+          <p class="card-text">
+            <strong>Description:</strong><br>
+            <%= listing.description %>
+          </p>
+
+          <p class="card-text">
+            <strong>Price:</strong>
+            ₹<%= listing.price !== undefined ? listing.price.toLocaleString("en-IN") : "Price not available" %>
+          </p>
+
+          <p class="card-text">
+            <strong>Location:</strong>
+            <%= listing.location %>
+          </p>
+
+          <p class="card-text">
+            <strong>Country:</strong>
+            <%= listing.country %>
+          </p>
+        </div>
+      </div>
+
+      <!-- EDIT / DELETE -->
+      <% if (currUser && listing.owner && listing.owner._id.equals(currUser._id)) { %>
+        <div class="d-flex justify-content-center gap-2 mb-4">
+          <a href="/listings/<%= listing._id %>/edit" class="btn btn-danger">Edit</a>
+
+          <form method="POST" action="/listings/<%= listing._id %>?_method=DELETE">
+            <button type="submit" class="btn btn-dark">Delete</button>
+          </form>
+        </div>
+      <% } %>
+
+      <!-- ADD REVIEW -->
+      <% if (currUser) { %>
+        <hr>
+        <h4 class="text-center">Leave a Review</h4>
+
+        <form action="/listings/<%= listing._id %>/reviews" method="POST" novalidate class="needs-validation mt-3">
+          <div class="mb-3">
+            <fieldset class="starability-slot">
+              <legend>Rating:</legend>
+              <input type="radio" id="no-rate" class="input-no-rate" name="review[rating]" value="0" checked />
+              <input type="radio" id="rate1" name="review[rating]" value="1" />
+              <label for="rate1">1 star</label>
+              <input type="radio" id="rate2" name="review[rating]" value="2" />
+              <label for="rate2">2 stars</label>
+              <input type="radio" id="rate3" name="review[rating]" value="3" />
+              <label for="rate3">3 stars</label>
+              <input type="radio" id="rate4" name="review[rating]" value="4" />
+              <label for="rate4">4 stars</label>
+              <input type="radio" id="rate5" name="review[rating]" value="5" />
+              <label for="rate5">5 stars</label>
+            </fieldset>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Comment</label>
+            <textarea name="review[comment]" class="form-control" rows="3" required></textarea>
+            <div class="invalid-feedback">Please add a comment</div>
+          </div>
+
+          <div class="text-center">
+            <button type="submit" class="btn btn-danger">Submit</button>
+          </div>
+        </form>
+      <% } %>
+
+      <!-- ALL REVIEWS -->
+      <hr>
+      <% if (listing.reviews.length > 0) { %>
+        <h4 class="text-center mb-3">All Reviews</h4>
+        <div class="row justify-content-center review-section">
+          <% for (let review of listing.reviews) { %>
+            <div class="card col-md-5 col-sm-10 m-2">
+              <div class="card-body">
+                <h5 class="card-title"><%= review.author ? review.author.username : "Anonymous" %></h5>
+                <p class="starability-result card-text" data-rating="<%= review.rating %>"></p>
+                <p class="card-text"><%= review.comment %></p>
+              </div>
+
+              <% if (currUser && review.author && review.author._id.equals(currUser._id)) { %>
+                <form method="POST" action="/listings/<%= listing._id %>/reviews/<%= review._id %>?_method=DELETE" class="text-center mb-3">
+                  <button class="btn btn-sm btn-dark">Delete</button>
+                </form>
+              <% } %>
+            </div>
+          <% } %>
+        </div>
+      <% } %>
+
+    </div>
+  </div>
+
+  <!-- MAP SECTION -->
+  <div class="row justify-content-center">
+    <div class="col-lg-8 col-md-10 mb-3">
+      <h3 class="mb-3 text-center">Where you'll be</h3>
+      <div class="map-wrapper position-relative">
+
+        <div
+          id="map"
+          data-lat="<%= listing.geometry.coordinates[1] %>"
+          data-lng="<%= listing.geometry.coordinates[0] %>"
+          data-title="<%= listing.title %>"
+          data-location="<%= listing.location %>"
+          data-appname="StayFinder"
+        ></div>
+
+        <!-- Loading Overlay -->
+        <div id="map-loading" class="map-loading">
+          Loading map...
+        </div>
+
+        
+        <!-- Directions Button -->
+        <button id="map-directions" class="map-directions-btn">
+          Get Directions
+        </button>
+
+      </div>
+      <style>
+        .map-wrapper {
+          position: relative;
+        }
+
+        #map {
+          height: 420px;
+          width: 100%;
+          border-radius: 14px;
+        }
+
+        .map-loading {
+          position: absolute;
+          inset: 0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: rgba(255,255,255,0.85);
+          border-radius: 14px;
+          font-weight: 600;
+          z-index: 10;
+        }
+
+        
+
+        .map-directions-btn {
+          position: absolute;
+          top: 10px;
+          right: 60px;
+          background: #000;
+          color: #fff;
+          border: none;
+          padding: 6px 14px;
+          border-radius: 20px;
+          font-size: 13px;
+          cursor: pointer;
+          z-index: 12;
+        }
+
+        .map-directions-btn:hover {
+          background: #333;
+        }
+      </style>
+    </div>
+  </div>
+</div>
+
+<script>
+  window.addEventListener("load", () => {
+    const loader = document.getElementById("map-loading");
+    if (loader) loader.style.display = "none";
+
+    const btn = document.getElementById("map-directions");
+    const map = document.getElementById("map");
+
+    if (btn && map) {
+      const lat = map.dataset.lat;
+      const lng = map.dataset.lng;
+
+      btn.addEventListener("click", () => {
+        window.open(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`);
+      });
+    }
+  });
+</script>
+<script src="/js/map.js"></script>

@@ -1,0 +1,63 @@
+<% layout("/layouts/boilerplate") %>
+
+<div class="row justify-content-center mt-5">
+  <div class="col-md-6 col-lg-5">
+    <h2 class="mb-4 text-center">Sign In on TripNest</h2>
+
+    <form action="/login" method="POST" class="needs-validation" novalidate>
+      
+      <div class="mb-3">
+        <label for="username" class="form-label">Username</label>
+        <input
+          name="username"
+          id="username"
+          type="text"
+          class="form-control"
+          required
+        />
+        <div class="invalid-feedback">Username is required</div>
+      </div>
+      <div class="mb-3">
+        <label for="password" class="form-label">Password</label>
+        <input
+          name="password"
+          id="password"
+          type="password"
+          class="form-control"
+          required
+        />
+        <div class="invalid-feedback">Password is required</div>
+      </div>
+
+      <button type="submit" class="btn btn-success w-100 mt-3">
+        Login
+      </button>
+    </form>
+  </div>
+</div>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  console.log("Login page loaded");
+
+  const form = document.querySelector("form");
+  const username = document.getElementById("username");
+  const password = document.getElementById("password");
+
+  if (!form) console.error("Login form not found");
+  if (!username) console.error("Username input missing");
+  if (!password) console.error("Password input missing");
+
+  form?.addEventListener("submit", (e) => {
+    console.log("Login form submitting");
+
+    console.log("Username value:", username?.value);
+    console.log("Password length:", password?.value?.length);
+
+    if (!username.value || !password.value) {
+      console.warn("Validation failed — empty fields");
+    } else {
+      console.log("Validation passed");
+    }
+  });
+});
+</script>

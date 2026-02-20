@@ -1,0 +1,167 @@
+<!--
+<body>
+    <h3>Create A New Listing</h3>
+    <form method="POST" actions="/listings">
+        <input name = "listing[title]" placeholder = "enter title" type="text" >
+        <br><br>
+        <textarea name = "listing[description]" placeholder = "enter description"> </textarea>
+        <br><br>
+        <input name = "listing[image]" placeholder = "enter image URl/link" type="text" >
+        <br><br>
+        <input name = "listing[price]" placeholder = "enter price of the place" type="number" >
+        <br><br>
+        <input name = "listing[country]" placeholder = "enter country" type="text" >
+        <br><br>
+        <input name = "listing[location]" placeholder = "enter location name" type="text" >
+        <br><br>
+        <button>Add</button>
+    </form>
+</body>
+-->
+<% layout('/layouts/boilerplate') %>
+
+<div class="row">
+  <div class="col-8 offset-2">
+
+    <h1>Create a new listing</h1>
+
+    <form action="/listings" method="POST" novalidate class="needs-validation" enctype="multipart/form-data">
+
+      <div class="mb-3">
+        <label for="title" class="form-label">Title</label>
+        <input
+          type="text"
+          id="title"
+          name="listing[title]"
+          required
+          class="form-control"
+          placeholder="Enter a catchy Title"
+        >
+        <div class="invalid-feedback"> Enter a proper title</div>
+      </div>
+
+      <div class="mb-3">
+        <label for="description" class="form-label">Description</label>
+        <textarea
+          id="description"
+          name="listing[description]"
+          class="form-control"
+          required
+        ></textarea>
+        <div class="invalid-feedback"> Enter a correct description</div>
+      </div>
+      <div class="mb-3">
+        <label for="category" class="form-label">Category</label>
+        <input
+          type="text"
+          id="category"
+          name="listing[category]"
+          class="form-control"
+          placeholder="Enter listing category"
+          required
+        >
+        <div class="invalid-feedback"> Enter a category </div>
+      </div>
+
+      <div class="row">
+        <div class="mb-3 col-md-4">
+          <label for="price" class="form-label">Price</label>
+          <input
+            type="number"
+            id="price"
+            name="listing[price]"
+            class="form-control"
+            placeholder="Enter The Price"
+            required
+          >
+          <div class="invalid-feedback"> Enter correct price </div>
+        </div>
+
+        <div class="mb-3 col-md-8">
+          <label for="country" class="form-label">Country</label>
+          <input
+            type="text"
+            id="country"
+            name="listing[country]"
+            class="form-control"
+            placeholder="Enter The Country"
+            required
+          >
+          <div class="invalid-feedback"> Enter correct country name </div>
+        </div>
+      </div>
+
+      <!-- <div class="mb-3">
+        <label for="image" class="form-label">Image URL</label>
+        <input
+          type="text"
+          id="image"
+          name="listing[image]"
+          class="form-control"
+          required
+        >
+        <div class="invalid-feedback"> Enter valid url/link </div>
+      </div> -->
+
+      <div class="mb-3">
+        <label for="image" class="form-label">Upload Listing Image</label>
+        <input
+          type="file"
+          id="image"
+          name="listing[image]"
+          class="form-control"
+          required
+        >
+        <div class="invalid-feedback"> Enter valid url/link </div>
+      </div>
+      
+
+      <div class="mb-3">
+        <label for="location" class="form-label">Location</label>
+        <input
+          type="text"
+          id="location"
+          name="listing[location]"
+          class="form-control"
+          required
+        >
+        <div class="invalid-feedback"> Enter correct location </div>
+      </div>
+      <button type="submit" class="btn btn-dark">Add</button>
+    </form>
+    <script>
+      console.log("New Listing page loaded");
+
+      document.addEventListener("DOMContentLoaded", () => {
+        console.log("DOM fully loaded for new listing form");
+
+        const form = document.querySelector("form");
+        if (!form) {
+          console.error("Form not found on new listing page");
+          return;
+        }
+
+        const inputs = form.querySelectorAll("input, textarea");
+        console.log("Form inputs detected:", inputs.length);
+
+        form.addEventListener("submit", (e) => {
+          console.log("Form submit triggered");
+
+          inputs.forEach(input => {
+            console.log(`Field ${input.name} value:`, input.value);
+          });
+
+          const fileInput = document.getElementById("image");
+          if (!fileInput) {
+            console.error("Image file input missing");
+          } else if (!fileInput.files.length) {
+            console.warn("No image file selected");
+          } else {
+            console.log("Selected file:", fileInput.files[0].name);
+          }
+        });
+      });
+    </script>
+
+  </div>
+</div>

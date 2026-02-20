@@ -1,0 +1,11 @@
+<% if (success && success.length) { console.log("FLASH SUCCESS:", success); %>
+  <div class="alert alert-success alert-dismissible fade show col-6 offset-3">
+    <%= success[0] %>
+  </div>
+<% } %>
+
+<% if (error && error.length) { console.error("FLASH ERROR:", error); %>
+  <div class="alert alert-danger alert-dismissible fade show col-6 offset-3">
+    <%= error[0] %>
+  </div>
+<% } %>
