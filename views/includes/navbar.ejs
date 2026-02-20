@@ -119,6 +119,13 @@
   .navbar-toggler-icon{
     filter: invert(1);
   }
+
+  /* SEARCH POSITION FIX */
+  @media (max-width:767px){
+    .navbar .flex-grow-1{
+      margin-top:12px;
+    }
+  }
 </style>
 
 <nav class="navbar navbar-expand-md border-bottom sticky-top" data-user="<%= currUser ? 'logged-in' : 'guest' %>">
