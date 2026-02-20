@@ -65,6 +65,31 @@
 .modern-filter small{
   font-size:12px;
 }
+/* ---------- MOBILE OPTIMIZATION ---------- */
+@media (max-width:575px){
+  .filters-bar{
+    overflow-x:auto;
+    flex-wrap:nowrap;
+    padding:10px;
+  }
+
+  .modern-filter{
+    min-width:72px;
+    font-size:12px;
+  }
+
+  .listing-card{
+    border-radius:14px;
+  }
+
+  .listing-card .card-body{
+    padding:.9rem;
+  }
+
+  .listing-card img{
+    height:16rem !important;
+  }
+}
 </style>
 <!-- SEARCH + FILTER BAR -->
 <form method="GET" action="/listings" class="row g-2 mb-4 align-items-center">
