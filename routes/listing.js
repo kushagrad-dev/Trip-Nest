@@ -116,24 +116,15 @@ router.route("/")
 router.get("/new", isLoggedIn, (req,res,next)=>{console.log("➕ New listing form opened"); next();}, wrapAsync(listingController.renderNewForm));
 
 // FUZZY SEARCH
-router.get("/search", async (req,res)=>{
+router.get("/search", (req,res)=>{
   const { q } = req.query;
 
   if(!q || q.trim()===""){
     return res.redirect("/listings");
   }
 
-  const listings = await Listing.find({}).lean();
-
-  const fuse = new Fuse(listings,{
-    keys:["title","location","country","description"],
-    threshold:0.4
-  });
-
-  const results = fuse.search(q);
-  const matchedListings = results.map(r=>r.item);
-
-  res.render("listings/index",{ allListings: matchedListings });
+  // Redirect to main listings route so search behaves like filters
+  res.redirect(`/listings?search=${encodeURIComponent(q.trim())}`);
 });
 
 // EDIT
