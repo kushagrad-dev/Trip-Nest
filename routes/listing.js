@@ -64,6 +64,7 @@ router.route("/")
     try{
       const { search, minPrice, maxPrice, sort , category } = req.query;
       let query = {};
+      let matchedIds = null;
 
       if (search && search.trim() !== "") {
         const allListingsForSearch = await Listing.find({});
@@ -75,7 +76,7 @@ router.route("/")
         });
 
         const results = fuse.search(search.trim());
-        const matchedIds = results.map(r => r.item._id);
+        matchedIds = results.map(r => r.item._id);
 
         query._id = { $in: matchedIds };
       }
@@ -104,6 +105,13 @@ router.route("/")
       const totalPages = Math.ceil(totalListings / limit);
 
       const allListings = await dbQuery.skip(skip).limit(limit);
+
+      // Apply relevance ranking order if search was used
+      if (matchedIds && matchedIds.length > 0) {
+        allListings.sort((a, b) => {
+          return matchedIds.indexOf(a._id.toString()) - matchedIds.indexOf(b._id.toString());
+        });
+      }
 
       res.render("listings/index", {
         allListings,
