@@ -7,16 +7,17 @@ module.exports.index = async (req, res) => {
 
   let query = {};
 
-  if (search) {
+  if (search && search.trim() !== "") {
+    const s = search.trim();
     query.$or = [
-      { title: { $regex: search, $options: "i" } },
-      { location: { $regex: search, $options: "i" } },
-      { country: { $regex: search, $options: "i" } }
+      { title: { $regex: s, $options: "i" } },
+      { location: { $regex: s, $options: "i" } },
+      { country: { $regex: s, $options: "i" } }
     ];
   }
 
-  if (category) {
-    query.category = category;
+  if (category && category.trim() !== "") {
+    query.category = { $regex: `^${category.trim()}$`, $options: "i" };
   }
 
   if (minPrice || maxPrice) {
@@ -25,7 +26,7 @@ module.exports.index = async (req, res) => {
     if (maxPrice) query.price.$lte = Number(maxPrice);
   }
 
-  let sortOption = {};
+  let sortOption = { _id: -1 };
   if (sort === "low") sortOption.price = 1;
   else if (sort === "high") sortOption.price = -1;
   else if (sort === "new") sortOption._id = -1;
@@ -114,7 +115,11 @@ module.exports.renderEditForm = async (req, res) => {
 module.exports.updateListing = async (req, res) => {
   const { id } = req.params;
 
-  let listing = await Listing.findByIdAndUpdate(id, { ...req.body.listing });
+  let listing = await Listing.findByIdAndUpdate(
+    id,
+    req.body.listing,
+    { runValidators: true, new: true }
+  );
 
   if (req.file) {
     listing.image = {
