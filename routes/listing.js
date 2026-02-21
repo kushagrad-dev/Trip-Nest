@@ -67,7 +67,7 @@ router.route("/")
       let matchedIds = null;
 
       if (search && search.trim() !== "") {
-        const allListingsForSearch = await Listing.find({});
+        const allListingsForSearch = await Listing.find({}).lean();
 
         const fuse = new Fuse(allListingsForSearch, {
           keys: ["title", "location", "country", "description"],
@@ -109,7 +109,9 @@ router.route("/")
       // Apply relevance ranking order if search was used
       if (matchedIds && matchedIds.length > 0) {
         allListings.sort((a, b) => {
-          return matchedIds.indexOf(a._id.toString()) - matchedIds.indexOf(b._id.toString());
+          const aIndex = matchedIds.findIndex(id => id.toString() === a._id.toString());
+          const bIndex = matchedIds.findIndex(id => id.toString() === b._id.toString());
+          return aIndex - bIndex;
         });
       }
 
