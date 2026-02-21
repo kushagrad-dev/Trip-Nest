@@ -66,11 +66,18 @@ router.route("/")
       let query = {};
 
       if (search && search.trim() !== "") {
-        query.$or = [
-          { title: { $regex: search, $options: "i" } },
-          { location: { $regex: search, $options: "i" } },
-          { country: { $regex: search, $options: "i" } }
-        ];
+        const allListingsForSearch = await Listing.find({});
+
+        const fuse = new Fuse(allListingsForSearch, {
+          keys: ["title", "location", "country", "description"],
+          threshold: 0.35,
+          ignoreLocation: true
+        });
+
+        const results = fuse.search(search.trim());
+        const matchedIds = results.map(r => r.item._id);
+
+        query._id = { $in: matchedIds };
       }
 
       if (category && category.trim() !== "") {
