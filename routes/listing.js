@@ -134,6 +134,42 @@ router.route("/")
 // NEW
 router.get("/new", isLoggedIn, (req,res,next)=>{console.log("➕ New listing form opened"); next();}, wrapAsync(listingController.renderNewForm));
 
+// LIVE SEARCH SUGGESTIONS API
+router.get("/suggest", async (req,res)=>{
+  try{
+    const { q } = req.query;
+
+    if(!q || q.trim()===""){
+      return res.json([]);
+    }
+
+    const listings = await Listing.find({})
+      .select("title location country")
+      .limit(50)
+      .lean();
+
+    const fuse = new Fuse(listings,{
+      keys:["title","location","country"],
+      threshold:0.4,
+      ignoreLocation:true
+    });
+
+    const results = fuse.search(q.trim()).slice(0,5);
+
+    const suggestions = results.map(r=>({
+      id: r.item._id,
+      title: r.item.title,
+      location: r.item.location,
+      country: r.item.country
+    }));
+
+    res.json(suggestions);
+
+  }catch(err){
+    console.error("Suggestion error:",err);
+    res.json([]);
+  }
+});
 // FUZZY SEARCH
 router.get("/search", (req,res)=>{
   const { q } = req.query;
