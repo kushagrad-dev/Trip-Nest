@@ -1,8 +1,7 @@
 {
   "engines": {
-    "node":"20.20.0"
+    "node": "20.20.0"
   },
-
   "name": "majorproject",
   "version": "1.0.0",
   "description": "",
@@ -24,6 +23,7 @@
     "ejs-mate": "^4.0.0",
     "express": "^5.2.1",
     "express-session": "^1.18.2",
+    "fuse.js": "^7.1.0",
     "joi": "^18.0.2",
     "mate": "^0.21.0",
     "method-override": "^3.0.0",
