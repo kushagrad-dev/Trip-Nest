@@ -79,15 +79,27 @@ router.route("/")
         if (maxPrice) query.price.$lte = Number(maxPrice);
       }
 
+      let page = parseInt(req.query.page) || 1;
+      let limit = 9;
+      let skip = (page - 1) * limit;
+
       let dbQuery = Listing.find(query);
 
       if (sort === "low") dbQuery = dbQuery.sort({ price: 1 });
       else if (sort === "high") dbQuery = dbQuery.sort({ price: -1 });
       else if (sort === "new") dbQuery = dbQuery.sort({ _id: -1 });
 
-      const allListings = await dbQuery;
+      const totalListings = await Listing.countDocuments(query);
+      const totalPages = Math.ceil(totalListings / limit);
 
-      res.render("listings/index", { allListings, filters: req.query });
+      const allListings = await dbQuery.skip(skip).limit(limit);
+
+      res.render("listings/index", {
+        allListings,
+        filters: req.query,
+        currentPage: page,
+        totalPages
+      });
 
     } catch(err){
       next(err);
