@@ -62,23 +62,21 @@ router.route("/")
     console.log(" Listings index controller");
 
     try{
-      const { search, minPrice, maxPrice, sort , category } = req.query;
+      const { search, q, minPrice, maxPrice, sort , category } = req.query;
+      const searchTerm = search || q;
       let query = {};
       let matchedIds = null;
 
-      if (search && search.trim() !== "") {
-        const allListingsForSearch = await Listing.find({}).lean();
+      if (searchTerm && searchTerm.trim() !== "") {
+        const term = searchTerm.trim();
 
-        const fuse = new Fuse(allListingsForSearch, {
-          keys: ["title", "location", "country", "description"],
-          threshold: 0.35,
-          ignoreLocation: true
-        });
-
-        const results = fuse.search(search.trim());
-        matchedIds = results.map(r => r.item._id);
-
-        query._id = { $in: matchedIds };
+        // First filter using MongoDB regex (FAST)
+        query.$or = [
+          { title: { $regex: term, $options: "i" } },
+          { location: { $regex: term, $options: "i" } },
+          { country: { $regex: term, $options: "i" } },
+          { description: { $regex: term, $options: "i" } }
+        ];
       }
 
       if (category && category.trim() !== "") {
