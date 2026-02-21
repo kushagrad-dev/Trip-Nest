@@ -1,7 +1,4 @@
 <% layout("/layouts/boilerplate") %>
-<script>
-  console.log("Edit Listing page loaded");
-</script>
 
 <div class="row">
   <div class="col-8 offset-2">
@@ -9,9 +6,6 @@
     <h1>Edit your listing</h1>
 
     <form action="/listings/<%= listing._id %>?_method=PUT" method="POST" novalidate class="needs-validation" enctype="multipart/form-data">
-      <script>
-        console.log("Edit form rendered for listing:", "<%= listing._id %>");
-      </script>
       <div class="mb-3">
         <label for="title" class="form-label">Title</label>
         <input
@@ -31,8 +25,7 @@
           id="description"
           name="listing[description]"
           required
-          class="form-control"
-        ><%= listing.description %></textarea>
+          class="form-control"><%= listing.description %></textarea>
         <div class="invalid-feedback"> Enter correct description </div>
       </div>
 
@@ -44,6 +37,7 @@
             id="price"
             name="listing[price]"
             value="<%= listing.price %>"
+            min="0"
             required
             class="form-control"
           >
