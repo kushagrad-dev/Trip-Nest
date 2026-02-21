@@ -70,17 +70,20 @@ router.route("/")
       if (searchTerm && searchTerm.trim() !== "") {
         const term = searchTerm.trim();
 
-        // safer regex search
-        const regex = new RegExp(term, "i");
+        // escape special regex characters so routing never breaks
+        const escaped = term.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+        const regex = new RegExp(escaped, "i");
 
+        // APPLY SEARCH FILTER TO QUERY (this was missing)
         query.$or = [
           { title: regex },
           { location: regex },
           { country: regex },
           { description: regex }
         ];
+        console.log(query);
 
-        console.log("Search regex:", regex);
+        console.log("Search applied:", regex);
       }
 
       if (category && category.trim() !== "") {
