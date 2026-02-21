@@ -70,13 +70,17 @@ router.route("/")
       if (searchTerm && searchTerm.trim() !== "") {
         const term = searchTerm.trim();
 
-        // First filter using MongoDB regex (FAST)
+        // safer regex search
+        const regex = new RegExp(term, "i");
+
         query.$or = [
-          { title: { $regex: term, $options: "i" } },
-          { location: { $regex: term, $options: "i" } },
-          { country: { $regex: term, $options: "i" } },
-          { description: { $regex: term, $options: "i" } }
+          { title: regex },
+          { location: regex },
+          { country: regex },
+          { description: regex }
         ];
+
+        console.log("Search regex:", regex);
       }
 
       if (category && category.trim() !== "") {
