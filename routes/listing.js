@@ -58,7 +58,41 @@ router.get("/explore", (req,res,next)=>{
 
 // INDEX + CREATE
 router.route("/")
-  .get((req,res,next)=>{console.log(" Listings index controller"); next();}, wrapAsync(listingController.index))
+  .get(async (req,res,next)=>{
+    console.log(" Listings index controller");
+
+    try{
+      const { search, minPrice, maxPrice, sort } = req.query;
+      let query = {};
+
+      if (search && search.trim() !== "") {
+        query.$or = [
+          { title: { $regex: search, $options: "i" } },
+          { location: { $regex: search, $options: "i" } },
+          { country: { $regex: search, $options: "i" } }
+        ];
+      }
+
+      if (minPrice || maxPrice) {
+        query.price = {};
+        if (minPrice) query.price.$gte = Number(minPrice);
+        if (maxPrice) query.price.$lte = Number(maxPrice);
+      }
+
+      let dbQuery = Listing.find(query);
+
+      if (sort === "low") dbQuery = dbQuery.sort({ price: 1 });
+      else if (sort === "high") dbQuery = dbQuery.sort({ price: -1 });
+      else if (sort === "new") dbQuery = dbQuery.sort({ _id: -1 });
+
+      const allListings = await dbQuery;
+
+      res.render("listings/index", { allListings, filters: req.query });
+
+    } catch(err){
+      next(err);
+    }
+  })
   .post(
     isLoggedIn,
     uploadMiddleware,
