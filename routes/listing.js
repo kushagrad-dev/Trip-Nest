@@ -62,7 +62,7 @@ router.route("/")
     console.log(" Listings index controller");
 
     try{
-      const { search, minPrice, maxPrice, sort } = req.query;
+      const { search, minPrice, maxPrice, sort , category } = req.query;
       let query = {};
 
       if (search && search.trim() !== "") {
@@ -71,6 +71,10 @@ router.route("/")
           { location: { $regex: search, $options: "i" } },
           { country: { $regex: search, $options: "i" } }
         ];
+      }
+
+      if (category && category.trim() !== "") {
+        query.category = { $regex: `^${category}$`, $options: "i" };
       }
 
       if (minPrice || maxPrice) {
