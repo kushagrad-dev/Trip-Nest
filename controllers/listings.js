@@ -3,12 +3,13 @@ const Listing = require("../models/listing");
 
 // INDEX
 module.exports.index = async (req, res) => {
-  const { search, category, minPrice, maxPrice, sort, page = 1 } = req.query;
+  const { search, q, category, minPrice, maxPrice, sort, page = 1 } = req.query;
+  const searchTerm = search || q;
 
   let query = {};
 
-  if (search && search.trim() !== "") {
-    const s = search.trim();
+  if (searchTerm && searchTerm.trim() !== "") {
+    const s = searchTerm.trim();
     query.$or = [
       { title: { $regex: s, $options: "i" } },
       { location: { $regex: s, $options: "i" } },
