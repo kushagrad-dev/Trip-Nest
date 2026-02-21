@@ -66,7 +66,9 @@
 
       <div class="mb-3">
         Original Image: <br>
-        <img src="<%= listing.image && listing.image.url ? listing.image.url : '' %>" onerror="console.log('Image failed to load:', this.src)">
+        <% if (listing.image && listing.image.url) { %>
+          <img src="<%= listing.image.url %>" alt="Listing Image" style="max-width:260px;border-radius:14px;box-shadow:0 6px 18px rgba(0,0,0,0.18);" loading="lazy">
+        <% } %>
       </div>
 
       <div class="mb-3">
@@ -75,8 +77,8 @@
           type="file"
           id="image"
           name="listing[image]"
-          value="<%= listing.image %>"
           class="form-control"
+          accept="image/*"
         >
         <div class="invalid-feedback"> Enter a valid url/link </div>
       </div>
@@ -94,22 +96,9 @@
         <div class="invalid-feedback"> Enter correct location </div>
       </div>
 
-      <button type="submit" class="btn-dark">Save</button>
-      <script>
-        document.querySelector("form").addEventListener("submit", function(){
-          console.log("Edit form submitted");
-        });
-      </script>
+      <button type="submit" class="btn btn-dark w-100 fw-semibold">Save Changes</button>
     </form>
 
   </div>
 </div>
 <script src="/js/script.js"></script>
-<script>
-  if (typeof bootstrap === "undefined") {
-    console.log("Bootstrap not loaded on Edit page");
-  }
-  window.addEventListener("error", e => {
-    console.log("Global error on Edit page:", e.message);
-  });
-</script>
