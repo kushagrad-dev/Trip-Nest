@@ -92,12 +92,12 @@
 }
 </style>
 <!-- SEARCH / FILTER BAR -->
-<form method="GET" action="/listings/search" class="row g-2 mb-4 align-items-center">
+<form method="GET" action="/listings" class="row g-2 mb-4 align-items-center">
 
   <div class="col-md-3 mt-4">
     <input
       type="text"
-      name="q"
+      name="search"
       class="form-control"
       placeholder="Search location or title..."
       value="<%= filters?.search || '' %>"
@@ -235,22 +235,29 @@
   <ul class="pagination justify-content-center">
 
     <li class="page-item <%= currentPage === 1 ? 'disabled' : '' %>">
-      <a class="page-link" href="?page=<%= currentPage - 1 %>">Prev</a>
+      <a class="page-link" href="?<%= new URLSearchParams({...filters, page: currentPage - 1}).toString() %>">Prev</a>
     </li>
 
     <% for (let i = 1; i <= totalPages; i++) { %>
       <li class="page-item <%= currentPage === i ? 'active' : '' %>">
-        <a class="page-link" href="?page=<%= i %>"><%= i %></a>
+        <a class="page-link" href="?<%= new URLSearchParams({...filters, page: i}).toString() %>"><%= i %></a>
       </li>
     <% } %>
 
     <li class="page-item <%= currentPage === totalPages ? 'disabled' : '' %>">
-      <a class="page-link" href="?page=<%= currentPage + 1 %>">Next</a>
+      <a class="page-link" href="?<%= new URLSearchParams({...filters, page: currentPage + 1}).toString() %>">Next</a>
     </li>
 
   </ul>
 </nav>
-<% } %>
+</div>
+  <% } %>
+  <% if(allListings.length === 0){ %>
+    <div class="text-center mt-5">
+      <h4>No listings found</h4>
+      <p>Try adjusting your search or filters.</p>
+    </div>
+  <% } %>
 
 </div>
 
