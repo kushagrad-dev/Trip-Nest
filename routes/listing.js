@@ -64,6 +64,7 @@ router.route("/")
     try{
       const { search, q, minPrice, maxPrice, sort , category } = req.query;
       const searchTerm = search || q;
+      console.log(" User search input:", searchTerm);
       let query = {};
       let matchedIds = null;
 
