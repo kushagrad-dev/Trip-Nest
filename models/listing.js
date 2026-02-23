@@ -84,7 +84,7 @@ const listingSchema = new Schema({
   }
 });
 
-/* ================= DEBUG MIDDLEWARE ================= */
+/* DEBUG MIDDLEWARE  */
 
 // Before save
 listingSchema.pre("save", function(next) {
@@ -107,7 +107,7 @@ listingSchema.post("save", function(error, doc, next) {
   next(error);
 });
 
-/* ===================================================== */
+
 // Middleware: delete associated reviews
 listingSchema.post("findOneAndDelete", async (listing) => {
   try {

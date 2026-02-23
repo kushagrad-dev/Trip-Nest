@@ -3,7 +3,7 @@ module.exports = (fn) => {
         try {
             await fn(req, res, next);
         } catch (err) {
-            console.error("\n🚨 ===== ERROR CAUGHT IN wrapAsync =====");
+            console.error("\n ERROR IN wrapAsync ");
             console.error("Time:", new Date().toISOString());
             console.error("Route:", req.method, req.originalUrl);
             console.error("Params:", req.params);

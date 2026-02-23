@@ -35,7 +35,7 @@ async function main() {
 main()
   .then(() => console.log("Connected to DB"))
   .catch(err => {
-    console.error("\n❌ DATABASE CONNECTION ERROR");
+    console.error("\nDATABASE CONNECTION ERROR");
     console.error("Time:", new Date().toISOString());
     console.error("Message:", err.message);
     console.error("Stack:\n", err.stack);
@@ -92,7 +92,7 @@ app.use(flash());
 
 // -------------------- GLOBAL LOCALS --------------------
 app.use((req, res, next) => {
-  console.log("\n🌐 REQUEST:", req.method, req.originalUrl);
+  console.log("\nREQUEST:", req.method, req.originalUrl);
   res.locals.success = req.flash("success");
   res.locals.error = req.flash("error");
   res.locals.currUser = req.user || null;
@@ -106,7 +106,7 @@ app.use("/", userRoutes);
 
 // -------------------- 404 --------------------
 app.use((req, res, next) => {
-  console.error("\n⚠️ 404 ERROR — Route Not Found");
+  console.error("\n404 ERROR — Route Not Found");
   console.error("URL:", req.originalUrl);
   console.error("Method:", req.method);
   next(new ExpressError(404, "Page Not Found"));
@@ -114,7 +114,7 @@ app.use((req, res, next) => {
 
 // -------------------- ERROR HANDLER --------------------
 app.use((err, req, res, next) => {
-  console.error("\n🚨 GLOBAL ERROR HANDLER");
+  console.error("\nGLOBAL ERROR HANDLER");
   console.error("Time:", new Date().toISOString());
   console.error("Route:", req.method, req.originalUrl);
   console.error("Status:", err.status || 500);
@@ -131,7 +131,7 @@ app.use((err, req, res, next) => {
 
 // -------------------- SERVER --------------------
 app.listen(8080, () => {
-  console.log("\n🚀 SERVER STARTED");
+  console.log("\nSERVER STARTED");
   console.log("Port: 8080");
   console.log("Time:", new Date().toLocaleString());
 });

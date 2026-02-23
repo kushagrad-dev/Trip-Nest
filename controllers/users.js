@@ -1,7 +1,7 @@
 const User = require("../models/user");
 
 module.exports.renderSignupForm = (req, res) => {
-  console.log("\n🧾 Render Signup Form Route Hit");
+  console.log("\nRender Signup Form Route Hit");
   res.render("users/signup");
 };
 
@@ -34,12 +34,12 @@ module.exports.signup = async (req, res, next) => {
 };
 
 module.exports.renderLoginForm = (req, res) => {
-  console.log("\n🔐 Render Login Form");
+  console.log("\nRender Login Form");
   res.render("users/login");
 };
 
 module.exports.login = (req, res) => {
-  console.log("\n✅ LOGIN SUCCESS");
+  console.log("\nLOGIN SUCCESS");
   console.log("User:", req.user?._id);
   console.log("Redirecting to:", res.locals.redirectUrl || "/listings");
 
@@ -48,15 +48,15 @@ module.exports.login = (req, res) => {
 };
 
 module.exports.logout = (req, res, next) => {
-  console.log("\n🚪 LOGOUT ATTEMPT");
+  console.log("\nLOGOUT ATTEMPT");
 
   req.logout((err) => {
     if (err) {
-      console.error("❌ Logout error:", err);
+      console.error("Logout error:", err);
       return next(err);
     }
 
-    console.log("✅ Logout successful");
+    console.log("Logout successful");
     req.flash("success", "You are logged out!");
     res.redirect("/listings");
   });

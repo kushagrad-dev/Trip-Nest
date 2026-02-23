@@ -3,7 +3,7 @@ const router = express.Router();
 
 // Route debug logger
 router.use((req, res, next) => {
-  console.log("\n📍 LISTING ROUTE HIT");
+  console.log("\nLISTING ROUTE HIT");
   console.log("Method:", req.method);
   console.log("URL:", req.originalUrl);
   console.log("Params:", req.params);

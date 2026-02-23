@@ -20,7 +20,7 @@ const reviewSchema = new Schema({
 });
 
 
-/* ================= REVIEW DEBUG LOGS ================= */
+
 
 // Before save
 reviewSchema.pre("save", function(next) {
@@ -52,6 +52,6 @@ reviewSchema.post("findOneAndDelete", function(doc) {
   }
 });
 
-/* ===================================================== */
+
 
 module.exports = mongoose.model("Review", reviewSchema);

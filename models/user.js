@@ -11,7 +11,7 @@ const userSchema = new Schema({
 
 userSchema.plugin(require("passport-local-mongoose"));
 
-/* ================= USER DEBUG LOGS ================= */
+
 
 // Before save
 userSchema.pre("save", function() {
@@ -41,6 +41,6 @@ userSchema.post("findOneAndDelete", function(doc) {
   }
 });
 
-/* ==================================================== */
+
 
 module.exports = mongoose.model("User", userSchema);
