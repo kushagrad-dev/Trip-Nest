@@ -66,7 +66,6 @@ router.route("/")
       const searchTerm = search || q;
       console.log(" User search input:", searchTerm);
       let query = {};
-      let matchedIds = null;
 
       if (searchTerm && searchTerm.trim() !== "") {
         const term = searchTerm.trim();
@@ -80,7 +79,8 @@ router.route("/")
           { title: regex },
           { location: regex },
           { country: regex },
-          { description: regex }
+          { description: regex },
+          { category: regex }
         ];
         console.log(query);
 
@@ -111,15 +111,6 @@ router.route("/")
       const totalPages = Math.ceil(totalListings / limit);
 
       const allListings = await dbQuery.skip(skip).limit(limit);
-
-      // Apply relevance ranking order if search was used
-      if (matchedIds && matchedIds.length > 0) {
-        allListings.sort((a, b) => {
-          const aIndex = matchedIds.findIndex(id => id.toString() === a._id.toString());
-          const bIndex = matchedIds.findIndex(id => id.toString() === b._id.toString());
-          return aIndex - bIndex;
-        });
-      }
 
       res.render("listings/index", {
         allListings,
