@@ -15,7 +15,7 @@ const validateBooking = (req, res, next) => {
   next();
 };
 
-if(!req.user) throw new ExpressError("Login required",401)
+
 
 // ---------------- CREATE BOOKING ----------------
 router.post("/", validateBooking, async (req, res, next) => {
