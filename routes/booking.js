@@ -34,7 +34,7 @@ router.post("/", isLoggedIn, validateBooking, async (req, res, next) => {
     if (!listing) throw new ExpressError("Listing not found", 404);
 
     // availability check using model method
-    const available = await Booking.isAvailable(listingId, checkIn, checkOut);
+    const available = await Booking.isAvailable(listingId, new Date(checkIn), new Date(checkOut));
     if(!available){
       throw new ExpressError("Selected dates not available",400);
     }
