@@ -5,6 +5,14 @@ const Listing = require("../models/listing");
 const ExpressError = require("../utils/ExpressError");
 const { bookingSchema } = require("../schema");
 
+// ---------------- AUTH CHECK ----------------
+const isLoggedIn = (req,res,next)=>{
+  if(!req.user){
+    throw new ExpressError("You must be logged in to book",401);
+  }
+  next();
+};
+
 // ---------------- VALIDATE BOOKING ----------------
 const validateBooking = (req, res, next) => {
   const { error } = bookingSchema.validate(req.body);
@@ -16,9 +24,8 @@ const validateBooking = (req, res, next) => {
 };
 
 
-
 // ---------------- CREATE BOOKING ----------------
-router.post("/", validateBooking, async (req, res, next) => {
+router.post("/", isLoggedIn, validateBooking, async (req, res, next) => {
   try {
     const { listingId, checkIn, checkOut, guests, totalPrice } = req.body.booking;
 
@@ -26,15 +33,13 @@ router.post("/", validateBooking, async (req, res, next) => {
     const listing = await Listing.findById(listingId);
     if (!listing) throw new ExpressError("Listing not found", 404);
 
-    // check date conflict
-    const conflict = await Booking.findOne({
-      listingId,
-      checkIn: { $lt: checkOut },
-      checkOut: { $gt: checkIn }
-    });
-
-    if (conflict) {
-      throw new ExpressError("Selected dates not available", 400);
+    // availability check using model method
+    const available = await Booking.isAvailable(listingId, checkIn, checkOut);
+    if(!available){
+      throw new ExpressError("Selected dates not available",400);
+    }
+    if(new Date(checkIn) < new Date()){
+      throw new ExpressError("Cannot book past dates",400);
     }
 
     // create booking
@@ -44,7 +49,7 @@ router.post("/", validateBooking, async (req, res, next) => {
       checkIn,
       checkOut,
       guests,
-      totalPrice
+      totalPrice: Number(totalPrice)
     });
 
     await booking.save();
@@ -58,7 +63,7 @@ router.post("/", validateBooking, async (req, res, next) => {
 });
 
 // ---------------- USER BOOKINGS ----------------
-router.get("/my", async (req, res, next) => {
+router.get("/my", isLoggedIn, async (req, res, next) => {
   try {
     const bookings = await Booking.find({ userId: req.user._id }).populate("listingId");
     res.render("bookings/index", { bookings });
@@ -68,9 +73,16 @@ router.get("/my", async (req, res, next) => {
 });
 
 // ---------------- CANCEL BOOKING ----------------
-router.delete("/:id", async (req, res, next) => {
+router.delete("/:id", isLoggedIn, async (req, res, next) => {
   try {
-    await Booking.findByIdAndDelete(req.params.id);
+    const booking = await Booking.findById(req.params.id);
+    if(!booking) throw new ExpressError("Booking not found",404);
+
+    if(booking.userId.toString() !== req.user._id.toString()){
+      throw new ExpressError("Unauthorized action",403);
+    }
+
+    await booking.deleteOne();
     req.flash("success", "Booking cancelled");
     res.redirect("/bookings/my");
   } catch (err) {
