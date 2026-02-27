@@ -212,3 +212,62 @@
   });
 </script>
 <script src="/js/map.js"></script>
+
+<form action="/bookings" method="POST" class="card p-3 shadow-sm mt-4">
+
+  <h5 class="mb-3">Book This Stay</h5>
+
+  <input type="hidden" name="booking[listingId]" value="<%= listing._id %>">
+
+  <div class="mb-3">
+    <label class="form-label">Check In</label>
+    <input type="date" name="booking[checkIn]" class="form-control" required>
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label">Check Out</label>
+    <input type="date" name="booking[checkOut]" class="form-control" required>
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label">Guests</label>
+    <input type="number" name="booking[guests]" class="form-control" min="1" max="20" value="1" required>
+  </div>
+
+  <input type="hidden" name="booking[totalPrice]" id="totalPriceInput">
+
+  <h5 class="mb-3">
+    Total: ₹ <span id="totalPrice">0</span>
+  </h5>
+
+  <button class="btn btn-danger w-100">Reserve</button>
+
+</form>
+
+
+<script>
+const pricePerNight = Number("<%= listing.price || 0 %>");
+
+const checkIn = document.querySelector("[name='booking[checkIn]']");
+const checkOut = document.querySelector("[name='booking[checkOut]']");
+const totalDisplay = document.getElementById("totalPrice");
+const totalInput = document.getElementById("totalPriceInput");
+
+function calculateTotal(){
+  if(checkIn.value && checkOut.value){
+    const start = new Date(checkIn.value);
+    const end = new Date(checkOut.value);
+
+    const nights = (end - start) / (1000*60*60*24);
+
+    if(nights > 0){
+      const total = nights * pricePerNight;
+      totalDisplay.innerText = total.toLocaleString("en-IN");
+      totalInput.value = total;
+    }
+  }
+}
+
+checkIn.addEventListener("change", calculateTotal);
+checkOut.addEventListener("change", calculateTotal);
+</script>

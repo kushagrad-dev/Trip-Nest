@@ -33,3 +33,20 @@ module.exports.reviewSchema = Joi.object({
       return value;
     }),
 });
+
+// ---------------- BOOKING SCHEMA ----------------
+module.exports.bookingSchema = Joi.object({
+  booking: Joi.object({
+    listingId: Joi.string().required(),
+    checkIn: Joi.date().required(),
+    checkOut: Joi.date().greater(Joi.ref("checkIn")).required(),
+    guests: Joi.number().min(1).max(20).required(),
+    totalPrice: Joi.number().min(0).required(),
+  })
+    .required()
+    .unknown(false)
+    .custom((value) => {
+      console.log("[JOI BOOKING VALIDATION PASSED DATA]", value);
+      return value;
+    }),
+});
