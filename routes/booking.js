@@ -27,29 +27,41 @@ const validateBooking = (req, res, next) => {
 // ---------------- CREATE BOOKING ----------------
 router.post("/", isLoggedIn, validateBooking, async (req, res, next) => {
   try {
-    const { listingId, checkIn, checkOut, guests, totalPrice } = req.body.booking;
+    const { listingId, checkIn, checkOut, guests } = req.body.booking;
 
     // check listing exists
     const listing = await Listing.findById(listingId);
     if (!listing) throw new ExpressError("Listing not found", 404);
 
-    // availability check using model method
-    const available = await Booking.isAvailable(listingId, new Date(checkIn), new Date(checkOut));
-    if(!available){
-      throw new ExpressError("Selected dates not available",400);
-    }
-    if(new Date(checkIn) < new Date()){
+    // normalize dates
+    const checkInDate = new Date(checkIn);
+    const checkOutDate = new Date(checkOut);
+
+    const today = new Date();
+    today.setHours(0,0,0,0);
+    checkInDate.setHours(0,0,0,0);
+
+    if(checkInDate < today){
       throw new ExpressError("Cannot book past dates",400);
     }
 
-    // create booking
+    // availability check using model method
+    const available = await Booking.isAvailable(listingId, checkInDate, checkOutDate);
+    if(!available){
+      throw new ExpressError("Selected dates not available",400);
+    }
+
+    // calculate price securely on server
+    const nights = Math.ceil((checkOutDate - checkInDate)/(1000*60*60*24));
+    const totalPrice = nights * listing.price;
+
     const booking = new Booking({
       listingId,
-      userId: req.user?._id,
-      checkIn,
-      checkOut,
+      userId: req.user._id,
+      checkIn: checkInDate,
+      checkOut: checkOutDate,
       guests,
-      totalPrice: Number(totalPrice)
+      totalPrice
     });
 
     await booking.save();
