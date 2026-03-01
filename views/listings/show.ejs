@@ -59,30 +59,33 @@
       <% } %>
 
 <script>
-const pricePerNight = Number("<%= listing.price || 0 %>");
+document.addEventListener("DOMContentLoaded", () => {
+  const pricePerNight = Number("<%= listing.price || 0 %>");
 
-const checkIn = document.querySelector("[name='booking[checkIn]']");
-const checkOut = document.querySelector("[name='booking[checkOut]']");
-const totalDisplay = document.getElementById("totalPrice");
-const totalInput = document.getElementById("totalPriceInput");
+  const checkIn = document.querySelector("[name='booking[checkIn]']");
+  const checkOut = document.querySelector("[name='booking[checkOut]']");
+  const totalDisplay = document.getElementById("totalPrice");
+  const totalInput = document.getElementById("totalPriceInput");
 
-function calculateTotal(){
-  if(checkIn.value && checkOut.value){
-    const start = new Date(checkIn.value);
-    const end = new Date(checkOut.value);
+  if (!checkIn || !checkOut) return;
 
-    const nights = (end - start) / (1000*60*60*24);
+  function calc() {
+    if (checkIn.value && checkOut.value) {
+      const start = new Date(checkIn.value);
+      const end = new Date(checkOut.value);
+      const nights = (end - start) / (1000 * 60 * 60 * 24);
 
-    if(nights > 0){
-      const total = nights * pricePerNight;
-      totalDisplay.innerText = total.toLocaleString("en-IN");
-      totalInput.value = total;
+      if (nights > 0) {
+        const total = nights * pricePerNight;
+        totalDisplay.textContent = total.toLocaleString("en-IN");
+        totalInput.value = total;
+      }
     }
   }
-}
 
-checkIn.addEventListener("change", calculateTotal);
-checkOut.addEventListener("change", calculateTotal);
+  checkIn.addEventListener("change", calc);
+  checkOut.addEventListener("change", calc);
+});
 </script>
 
 <form action="/bookings" method="POST" class="card p-3 shadow-sm mt-4">
