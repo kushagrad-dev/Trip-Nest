@@ -1,0 +1,21 @@
+<% layout("/layouts/boilerplate") %>
+
+<h2>Booking Confirmed 🎉</h2>
+
+<p class="text-muted">Booking ID: <%= booking._id %></p>
+
+<p><b>Listing:</b> <%= booking.listingId.title %></p>
+
+<img src="<%= booking.listingId.image.url %>" class="img-fluid rounded mb-3">
+<p><b>Check-In:</b> <%= booking.checkIn.toDateString() %></p>
+<p><b>Check-Out:</b> <%= booking.checkOut.toDateString() %></p>
+<p><b>Guests:</b> <%= booking.guests %></p>
+<p><b>Total Price:</b> ₹ <%= booking.totalPrice.toLocaleString("en-IN") %></p>
+<p><b>Nights:</b> <%= booking.nights %></p>
+
+<a href="/bookings/my" class="btn btn-outline-dark mt-2">My Bookings</a>
+
+
+
+
+<a href="/listings" class="btn btn-dark mt-3">Back to Listings</a>

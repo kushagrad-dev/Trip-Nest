@@ -5,9 +5,6 @@ if (process.env.NODE_ENV !== "production") {
 const express = require("express");
 const app = express();
 
-const bookingRoutes = require("./routes/booking");
-app.use("/bookings", bookingRoutes);
-
 const mongoose = require("mongoose");
 const path = require("path");
 const methodOverride = require("method-override");
@@ -20,6 +17,7 @@ const LocalStrategy = require("passport-local");
 
 const ExpressError = require("./utils/ExpressError.js");
 const User = require("./models/user.js");
+const Booking = require("./models/booking.js");
 
 const listingRoutes = require("./routes/listing.js");
 const reviewRoutes = require("./routes/review.js");
@@ -50,6 +48,7 @@ app.set("views", path.join(__dirname, "views"));
 app.engine("ejs", ejsMate);
 
 app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 app.use(methodOverride("_method"));
 app.use(express.static(path.join(__dirname, "public")));
 
@@ -100,6 +99,23 @@ app.use((req, res, next) => {
   res.locals.error = req.flash("error");
   res.locals.currUser = req.user || null;
   next();
+});
+
+const bookingRoutes = require("./routes/booking");
+app.use("/bookings", bookingRoutes);
+
+// -------------------- BOOKING CONFIRMATION PAGE --------------------
+app.get("/bookings/:id/confirm", async (req, res, next) => {
+  try {
+    const booking = await Booking.findById(req.params.id).populate("listingId");
+    if (!booking) {
+      req.flash("error", "Booking not found");
+      return res.redirect("/listings");
+    }
+    res.render("bookings/confirm.ejs", { booking });
+  } catch (err) {
+    next(err);
+  }
 });
 
 // -------------------- ROUTES --------------------
