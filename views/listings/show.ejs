@@ -8,8 +8,10 @@
   <div class="row justify-content-center card-listing">
     <div class="col-lg-8 col-md-10">
 
+      <!-- TITLE -->
       <h3 class="text-center mb-4"><%= listing.title %></h3>
 
+      <!-- LISTING CARD -->
       <div class="card border-0 shadow-none mb-3">
         <img
           src="<%= listing.image.url %>"
@@ -45,6 +47,7 @@
         </div>
       </div>
 
+      <!-- EDIT / DELETE -->
       <% if (currUser && listing.owner && listing.owner._id.equals(currUser._id)) { %>
         <div class="d-flex justify-content-center gap-2 mb-4">
           <a href="/listings/<%= listing._id %>/edit" class="btn btn-danger">Edit</a>
@@ -55,66 +58,65 @@
         </div>
       <% } %>
 
-      <!-- BOOKING FORM -->
-      <form action="/bookings" method="POST" class="card p-3 shadow-sm mt-4">
+<script>
+const pricePerNight = Number("<%= listing.price || 0 %>");
 
-        <h5 class="mb-3">Book This Stay</h5>
+const checkIn = document.querySelector("[name='booking[checkIn]']");
+const checkOut = document.querySelector("[name='booking[checkOut]']");
+const totalDisplay = document.getElementById("totalPrice");
+const totalInput = document.getElementById("totalPriceInput");
 
-        <input type="hidden" name="booking[listingId]" value="<%= listing._id %>">
+function calculateTotal(){
+  if(checkIn.value && checkOut.value){
+    const start = new Date(checkIn.value);
+    const end = new Date(checkOut.value);
 
-        <div class="mb-3">
-          <label class="form-label">Check In</label>
-          <input type="date" name="booking[checkIn]" class="form-control" required>
-        </div>
+    const nights = (end - start) / (1000*60*60*24);
 
-        <div class="mb-3">
-          <label class="form-label">Check Out</label>
-          <input type="date" name="booking[checkOut]" class="form-control" required>
-        </div>
+    if(nights > 0){
+      const total = nights * pricePerNight;
+      totalDisplay.innerText = total.toLocaleString("en-IN");
+      totalInput.value = total;
+    }
+  }
+}
 
-        <div class="mb-3">
-          <label class="form-label">Guests</label>
-          <input type="number" name="booking[guests]" class="form-control" min="1" max="20" value="1" required>
-        </div>
+checkIn.addEventListener("change", calculateTotal);
+checkOut.addEventListener("change", calculateTotal);
+</script>
 
-        <input type="hidden" name="booking[totalPrice]" id="totalPriceInput">
+<form action="/bookings" method="POST" class="card p-3 shadow-sm mt-4">
 
-        <h5 class="mb-3">
-          Total: ₹ <span id="totalPrice">0</span>
-        </h5>
+  <h5 class="mb-3">Book This Stay</h5>
 
-        <button class="btn btn-danger w-100">Reserve</button>
+  <input type="hidden" name="booking[listingId]" value="<%= listing._id %>">
 
-      </form>
+  <div class="mb-3">
+    <label class="form-label">Check In</label>
+    <input type="date" name="booking[checkIn]" class="form-control" required>
+  </div>
 
-      <!-- TOTAL CALC SCRIPT -->
-      <script>
-      document.addEventListener("DOMContentLoaded", function () {
-        const pricePerNight = Number("<%= listing.price || 0 %>");
-        const checkIn = document.querySelector("[name='booking[checkIn]']");
-        const checkOut = document.querySelector("[name='booking[checkOut]']");
-        const totalDisplay = document.getElementById("totalPrice");
-        const totalInput = document.getElementById("totalPriceInput");
+  <div class="mb-3">
+    <label class="form-label">Check Out</label>
+    <input type="date" name="booking[checkOut]" class="form-control" required>
+  </div>
 
-        function calculateTotal() {
-          if (checkIn.value && checkOut.value) {
-            const start = new Date(checkIn.value);
-            const end = new Date(checkOut.value);
-            const nights = (end - start) / (1000 * 60 * 60 * 24);
+  <div class="mb-3">
+    <label class="form-label">Guests</label>
+    <input type="number" name="booking[guests]" class="form-control" min="1" max="20" value="1" required>
+  </div>
 
-            if (nights > 0) {
-              const total = nights * pricePerNight;
-              totalDisplay.innerText = total.toLocaleString("en-IN");
-              totalInput.value = total;
-            }
-          }
-        }
+  <input type="hidden" name="booking[totalPrice]" id="totalPriceInput">
 
-        checkIn.addEventListener("change", calculateTotal);
-        checkOut.addEventListener("change", calculateTotal);
-      });
-      </script>
+  <h5 class="mb-3">
+    Total: ₹ <span id="totalPrice">0</span>
+  </h5>
 
+  <button class="btn btn-danger w-100">Reserve</button>
+
+</form>
+
+      <!-- ADD REVIEW -->
       <% if (currUser) { %>
         <hr>
         <h4 class="text-center">Leave a Review</h4>
@@ -149,6 +151,7 @@
         </form>
       <% } %>
 
+      <!-- ALL REVIEWS -->
       <hr>
       <% if (listing.reviews.length > 0) { %>
         <h4 class="text-center mb-3">All Reviews</h4>
@@ -173,6 +176,97 @@
 
     </div>
   </div>
+
+  <!-- MAP SECTION -->
+  <div class="row justify-content-center">
+    <div class="col-lg-8 col-md-10 mb-3">
+      <h3 class="mb-3 text-center">Where you'll be</h3>
+      <div class="map-wrapper position-relative">
+
+        <div
+          id="map"
+          data-lat="<%= listing.geometry.coordinates[1] %>"
+          data-lng="<%= listing.geometry.coordinates[0] %>"
+          data-title="<%= listing.title %>"
+          data-location="<%= listing.location %>"
+          data-appname="StayFinder"
+        ></div>
+
+        <!-- Loading Overlay -->
+        <div id="map-loading" class="map-loading">
+          Loading map...
+        </div>
+
+        
+        <!-- Directions Button -->
+        <button id="map-directions" class="map-directions-btn">
+          Get Directions
+        </button>
+
+      </div>
+      <style>
+        .map-wrapper {
+          position: relative;
+        }
+
+        #map {
+          height: 420px;
+          width: 100%;
+          border-radius: 14px;
+        }
+
+        .map-loading {
+          position: absolute;
+          inset: 0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: rgba(255,255,255,0.85);
+          border-radius: 14px;
+          font-weight: 600;
+          z-index: 10;
+        }
+
+        
+
+        .map-directions-btn {
+          position: absolute;
+          top: 10px;
+          right: 60px;
+          background: #000;
+          color: #fff;
+          border: none;
+          padding: 6px 14px;
+          border-radius: 20px;
+          font-size: 13px;
+          cursor: pointer;
+          z-index: 12;
+        }
+
+        .map-directions-btn:hover {
+          background: #333;
+        }
+      </style>
+    </div>
+  </div>
 </div>
 
+<script>
+  window.addEventListener("load", () => {
+    const loader = document.getElementById("map-loading");
+    if (loader) loader.style.display = "none";
+
+    const btn = document.getElementById("map-directions");
+    const map = document.getElementById("map");
+
+    if (btn && map) {
+      const lat = map.dataset.lat;
+      const lng = map.dataset.lng;
+
+      btn.addEventListener("click", () => {
+        window.open(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`);
+      });
+    }
+  });
+</script>
 <script src="/js/map.js"></script>
