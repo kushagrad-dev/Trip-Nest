@@ -44,6 +44,9 @@ router.post("/", isLoggedIn, validateBooking, async (req, res, next) => {
     if(checkInDate < today){
       throw new ExpressError("Cannot book past dates",400);
     }
+    if(checkOutDate <= checkInDate){
+      throw new ExpressError("Check-out must be after check-in",400);
+    }
 
     // availability check using model method
     const available = await Booking.isAvailable(listingId, checkInDate, checkOutDate);
@@ -67,7 +70,7 @@ router.post("/", isLoggedIn, validateBooking, async (req, res, next) => {
     await booking.save();
 
     req.flash("success", "Booking confirmed!");
-    res.redirect(`/listings/${listingId}`);
+    res.redirect(`/bookings/${booking._id}/confirm`);
 
   } catch (err) {
     next(err);
@@ -77,7 +80,8 @@ router.post("/", isLoggedIn, validateBooking, async (req, res, next) => {
 // ---------------- USER BOOKINGS ----------------
 router.get("/my", isLoggedIn, async (req, res, next) => {
   try {
-    const bookings = await Booking.find({ userId: req.user._id }).populate("listingId");
+    const bookings = await Booking.find({ userId: req.user._id })
+      .populate("listingId","title image price location");
     res.render("bookings/index", { bookings });
   } catch (err) {
     next(err);
