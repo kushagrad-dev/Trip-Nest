@@ -58,6 +58,35 @@
         </div>
       <% } %>
 
+
+
+<script>
+const pricePerNight = Number("<%= listing.price || 0 %>");
+
+const checkIn = document.querySelector("[name='booking[checkIn]']");
+const checkOut = document.querySelector("[name='booking[checkOut]']");
+const totalDisplay = document.getElementById("totalPrice");
+const totalInput = document.getElementById("totalPriceInput");
+
+function calculateTotal(){
+  if(checkIn.value && checkOut.value){
+    const start = new Date(checkIn.value);
+    const end = new Date(checkOut.value);
+
+    const nights = (end - start) / (1000*60*60*24);
+
+    if(nights > 0){
+      const total = nights * pricePerNight;
+      totalDisplay.innerText = total.toLocaleString("en-IN");
+      totalInput.value = total;
+    }
+  }
+}
+
+checkIn.addEventListener("change", calculateTotal);
+checkOut.addEventListener("change", calculateTotal);
+</script>
+
       <!-- ADD REVIEW -->
       <% if (currUser) { %>
         <hr>
@@ -243,31 +272,3 @@
   <button class="btn btn-danger w-100">Reserve</button>
 
 </form>
-
-
-<script>
-const pricePerNight = Number("<%= listing.price || 0 %>");
-
-const checkIn = document.querySelector("[name='booking[checkIn]']");
-const checkOut = document.querySelector("[name='booking[checkOut]']");
-const totalDisplay = document.getElementById("totalPrice");
-const totalInput = document.getElementById("totalPriceInput");
-
-function calculateTotal(){
-  if(checkIn.value && checkOut.value){
-    const start = new Date(checkIn.value);
-    const end = new Date(checkOut.value);
-
-    const nights = (end - start) / (1000*60*60*24);
-
-    if(nights > 0){
-      const total = nights * pricePerNight;
-      totalDisplay.innerText = total.toLocaleString("en-IN");
-      totalInput.value = total;
-    }
-  }
-}
-
-checkIn.addEventListener("change", calculateTotal);
-checkOut.addEventListener("change", calculateTotal);
-</script>
