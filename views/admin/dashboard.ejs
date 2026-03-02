@@ -1,80 +1,168 @@
-<h2 class="text-center fw-bold mb-5">Super Admin Control Panel</h2>
+<h2 class="text-center fw-bold mb-5" style="letter-spacing:.5px;">Admin Dashboard</h2>
 
 <div class="container">
 
-<!-- USERS -->
-<h4 class="mb-3">Users</h4>
+  <!-- STATS ROW -->
+  <div class="row mb-5 g-4 text-center">
 
-<% users.forEach(u=>{ %>
-<div class="card p-3 mb-2 shadow-sm d-flex flex-row justify-content-between align-items-center">
+    <div class="col-md-4">
+      <div class="stat-card shadow-sm">
+        <h3><%= users.length %></h3>
+        <p>Total Users</p>
+      </div>
+    </div>
 
-  <div>
-    <b><%= u.username %></b>
-    <span class="text-muted small">(<%= u.email %>)</span>
-    <% if(u.role==="admin"){ %>
-      <span class="badge bg-success ms-2">Admin</span>
-    <% } %>
+    <div class="col-md-4">
+      <div class="stat-card shadow-sm">
+        <h3><%= listings.length %></h3>
+        <p>Total Listings</p>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="stat-card shadow-sm">
+        <h3><%= reviews.length %></h3>
+        <p>Total Reviews</p>
+      </div>
+    </div>
+
   </div>
 
-  <div class="d-flex gap-2">
 
-    <% if(u.role!=="admin"){ %>
-      <form method="POST" action="/admin/user/<%=u._id%>/admin?_method=PATCH">
-        <button class="btn btn-warning btn-sm">Make Admin</button>
-      </form>
-    <% } %>
+  <!-- USERS -->
+  <div class="section-card">
+    <div class="section-header">Users Management</div>
 
-    <form method="POST" action="/admin/user/<%=u._id%>?_method=DELETE">
-      <button class="btn btn-danger btn-sm">Delete</button>
-    </form>
+    <% users.forEach(u=>{ %>
+      <div class="item-row">
+
+        <div>
+          <b><%= u.username %></b>
+          <div class="sub"> <%= u.email %> </div>
+        </div>
+
+        <div class="d-flex gap-2">
+
+          <% if(u.role!=="admin"){ %>
+            <form method="POST" action="/admin/user/<%=u._id%>/admin?_method=PATCH">
+              <button class="btn btn-sm btn-warning">Make Admin</button>
+            </form>
+          <% } else { %>
+            <span class="badge bg-success align-self-center">Admin</span>
+          <% } %>
+
+          <form method="POST" action="/admin/user/<%=u._id%>?_method=DELETE">
+            <button class="btn btn-sm btn-danger">Delete</button>
+          </form>
+
+        </div>
+      </div>
+    <% }) %>
+
+  </div>
+
+
+  <!-- LISTINGS -->
+  <div class="section-card">
+    <div class="section-header">Listings Control</div>
+
+    <% listings.forEach(l=>{ %>
+      <div class="item-row">
+
+        <div>
+          <b><%= l.title %></b>
+          <div class="sub">Owner: <%= l.owner.username %></div>
+        </div>
+
+        <form method="POST" action="/admin/listing/<%=l._id%>?_method=DELETE">
+          <button class="btn btn-sm btn-danger">Remove</button>
+        </form>
+
+      </div>
+    <% }) %>
+
+  </div>
+
+
+  <!-- REVIEWS -->
+  <div class="section-card">
+    <div class="section-header">Reviews Moderation</div>
+
+    <% reviews.forEach(r=>{ %>
+      <div class="item-row">
+
+        <div>
+          <%= r.comment %>
+          <div class="sub">by <%= r.author.username %></div>
+        </div>
+
+        <form method="POST" action="/admin/review/<%=r._id%>?_method=DELETE">
+          <button class="btn btn-sm btn-danger">Delete</button>
+        </form>
+
+      </div>
+    <% }) %>
 
   </div>
 
 </div>
-<% }) %>
 
 
-<hr class="my-5">
+<style>
 
+.section-card{
+  background:#fff;
+  border-radius:18px;
+  padding:1.5rem;
+  margin-bottom:3rem;
+  box-shadow:0 10px 30px rgba(0,0,0,.08);
+}
 
-<!-- LISTINGS -->
-<h4 class="mb-3">Listings</h4>
+.section-header{
+  font-weight:700;
+  font-size:1.15rem;
+  margin-bottom:1.2rem;
+  border-left:4px solid #fe424d;
+  padding-left:.6rem;
+}
 
-<% listings.forEach(l=>{ %>
-<div class="card p-3 mb-2 shadow-sm d-flex flex-row justify-content-between align-items-center">
+.item-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:.75rem 0;
+  border-bottom:1px solid #f1f1f1;
+}
 
-  <div>
-    <b><%= l.title %></b>
-    <span class="text-muted small">by <%= l.owner.username %></span>
-  </div>
+.item-row:last-child{
+  border-bottom:none;
+}
 
-  <form method="POST" action="/admin/listing/<%=l._id%>?_method=DELETE">
-    <button class="btn btn-danger btn-sm">Delete</button>
-  </form>
+.sub{
+  font-size:.8rem;
+  color:#777;
+}
 
-</div>
-<% }) %>
+.stat-card{
+  background:#fff;
+  padding:1.8rem 1rem;
+  border-radius:18px;
+  transition:.25s ease;
+}
 
+.stat-card:hover{
+  transform:translateY(-6px);
+  box-shadow:0 15px 35px rgba(0,0,0,.12)!important;
+}
 
-<hr class="my-5">
+.stat-card h3{
+  font-weight:700;
+  margin-bottom:.3rem;
+}
 
+.stat-card p{
+  color:#777;
+  margin:0;
+}
 
-<!-- REVIEWS -->
-<h4 class="mb-3">Reviews</h4>
-
-<% reviews.forEach(r=>{ %>
-<div class="card p-3 mb-2 shadow-sm d-flex flex-row justify-content-between align-items-center">
-
-  <div>
-    <%= r.comment %>
-    <span class="text-muted small"> — <%= r.author.username %></span>
-  </div>
-
-  <form method="POST" action="/admin/review/<%=r._id%>?_method=DELETE">
-    <button class="btn btn-danger btn-sm">Delete</button>
-  </form>
-
-</div>
-<% }) %>
-
-</div>
+</style>
