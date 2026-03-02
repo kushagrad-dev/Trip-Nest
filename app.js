@@ -4,13 +4,17 @@ if (process.env.NODE_ENV !== "production") {
 
 const express = require("express");
 const app = express();
+app.disable("x-powered-by");
+if(process.env.NODE_ENV === "production"){
+  app.set("trust proxy", 1);
+}
 
 const mongoose = require("mongoose");
 const path = require("path");
 const methodOverride = require("method-override");
 const ejsMate = require("ejs-mate");
 const session = require("express-session");
-const MongoStore = require("connect-mongo").default || require("connect-mongo");
+const MongoStore = require("connect-mongo");
 const flash = require("connect-flash");
 const passport = require("passport");
 const LocalStrategy = require("passport-local");
@@ -22,6 +26,7 @@ const Booking = require("./models/booking.js");
 const listingRoutes = require("./routes/listing.js");
 const reviewRoutes = require("./routes/review.js");
 const userRoutes = require("./routes/user.js");
+const adminRoutes = require("./routes/admin");
 
 const dbUrl = process.env.ATLASDB_URL;
 
@@ -31,7 +36,9 @@ app.get("/privacy", (req,res)=>{
 
 // -------------------- DB --------------------
 async function main() {
-  await mongoose.connect(dbUrl);
+  await mongoose.connect(dbUrl,{
+    serverSelectionTimeoutMS:5000
+  });
 }
 main()
   .then(() => console.log("Connected to DB"))
@@ -48,9 +55,14 @@ app.set("views", path.join(__dirname, "views"));
 app.engine("ejs", ejsMate);
 
 app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
+app.use(express.json({limit:"10kb"}));
 app.use(methodOverride("_method"));
 app.use(express.static(path.join(__dirname, "public")));
+
+const helmet = require("helmet");
+const compression = require("compression");
+app.use(helmet());
+app.use(compression());
 
 // -------------------- SESSION STORE --------------------
 
@@ -74,6 +86,7 @@ const sessionOptions = {
     expires: Date.now() + 7 * 24 * 60 * 60 * 1000,
     maxAge: 7 * 24 * 60 * 60 * 1000,
     httpOnly: true,
+    secure: process.env.NODE_ENV === "production"
   },
 };
 
@@ -122,8 +135,6 @@ app.get("/bookings/:id/confirm", async (req, res, next) => {
 app.use("/listings", listingRoutes);
 app.use("/listings/:id/reviews", reviewRoutes);
 app.use("/", userRoutes);
-
-//admin routes
 app.use("/admin", adminRoutes);
 
 // -------------------- 404 --------------------
@@ -152,15 +163,12 @@ app.use((err, req, res, next) => {
 });
 
 // -------------------- SERVER --------------------
-app.listen(8080, () => {
+const PORT = process.env.PORT || 8080;
+app.listen(PORT, () => {
   console.log("\nSERVER STARTED");
-  console.log("Port: 8080");
+  console.log("Port:", PORT);
   console.log("Time:", new Date().toLocaleString());
 });
 
 // DEBUG TOKEN CHECK
 console.log("MAP TOKEN:", process.env.MAP_TOKEN ? "Loaded" : "Missing");
-
-
-//admin dashboard
-
