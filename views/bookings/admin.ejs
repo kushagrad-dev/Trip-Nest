@@ -25,7 +25,7 @@
           <!-- IMAGE -->
           <div class="col-md-5 position-relative">
             <img
-              src="<%= b.listingId.image.url %>"
+              src="<%= (b.listingId.image && b.listingId.image.url) ? b.listingId.image.url : '/images/default.jpg' %>"
               class="img-fluid rounded-start h-100 w-100"
               style="object-fit:cover;"
             >
