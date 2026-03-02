@@ -124,7 +124,6 @@ app.use("/listings/:id/reviews", reviewRoutes);
 app.use("/", userRoutes);
 
 //admin routes
-const adminRoutes = require("./routes/admin");
 app.use("/admin", adminRoutes);
 
 // -------------------- 404 --------------------
