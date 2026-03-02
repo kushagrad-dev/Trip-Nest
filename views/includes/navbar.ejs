@@ -303,18 +303,7 @@
       <div class="navbar-nav ms-auto bg-white">
         <a class="nav-link" href="/listings/new">TripNest your home</a>
 
-        <% if(currUser){ %>
-          <div class="notification-wrapper" id="notifBell">
-            <i class="fa-solid fa-bell"></i>
-            <span class="notification-badge" id="notifCount">3</span>
-
-            <div class="notification-dropdown" id="notifDropdown">
-              <div class="notification-item">New booking request</div>
-              <div class="notification-item">Booking approved</div>
-              <div class="notification-item">New review received</div>
-            </div>
-          </div>
-        <% } %>
+        
 
         <% if (!currUser) { %>
           <a class="nav-link" href="/signup"><b>Trip up</b></a>
