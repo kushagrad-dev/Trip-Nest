@@ -1,46 +1,79 @@
 <h2 class="text-center mb-4">Admin Booking Panel</h2>
+<h2 class="text-center fw-bold mb-5" style="letter-spacing:.5px;">Admin Booking Dashboard</h2>
 
 <div class="container">
+
+  <% if(bookings.length === 0){ %>
+    <div class="text-center text-muted fs-5 mt-5">
+      No bookings yet.
+    </div>
+  <% } %>
+
   <% bookings.forEach(b => { %>
-    <div class="card mb-3 shadow-sm">
+
+    <div class="card mb-4 border-0 shadow booking-card">
+
       <div class="row g-0">
 
-        <div class="col-md-4">
-          <img src="<%= b.listingId.image.url %>" class="img-fluid rounded-start" style="height:100%; object-fit:cover;">
+        <!-- IMAGE -->
+        <div class="col-md-4 position-relative">
+          <img 
+            src="<%= b.listingId.image.url %>" 
+            class="img-fluid rounded-start h-100 w-100"
+            style="object-fit:cover;"
+          >
+
+          <!-- STATUS BADGE -->
+          <div class="status-badge">
+            <% if(b.status==="pending"){ %>
+              <span class="badge bg-warning text-dark px-3 py-2">Pending</span>
+            <% } else if(b.status==="confirmed"){ %>
+              <span class="badge bg-success px-3 py-2">Confirmed</span>
+            <% } else { %>
+              <span class="badge bg-danger px-3 py-2">Cancelled</span>
+            <% } %>
+          </div>
         </div>
 
+        <!-- CONTENT -->
         <div class="col-md-8">
-          <div class="card-body">
+          <div class="card-body d-flex flex-column h-100">
 
-            <h5><%= b.listingId.title %></h5>
+            <div class="d-flex justify-content-between align-items-start mb-2">
+              <h4 class="fw-semibold mb-0"><%= b.listingId.title %></h4>
+              <span class="price-tag">
+                ₹ <%= b.totalPrice.toLocaleString("en-IN") %>
+              </span>
+            </div>
 
-            <p>
-              User: <b><%= b.userId.username %></b><br>
-              Dates: <%= b.checkIn.toDateString() %> → <%= b.checkOut.toDateString() %><br>
-              Guests: <%= b.guests %><br>
-              Total: ₹ <%= b.totalPrice.toLocaleString("en-IN") %>
-            </p>
+            <div class="text-muted small mb-3">
+              Booked by <b><%= b.userId.username %></b>
+            </div>
 
-            <p>
-              Status:
-              <% if(b.status==="pending"){ %>
-                <span class="badge bg-warning text-dark">Pending</span>
-              <% } else if(b.status==="confirmed"){ %>
-                <span class="badge bg-success">Confirmed</span>
-              <% } else { %>
-                <span class="badge bg-danger">Cancelled</span>
-              <% } %>
-            </p>
+            <div class="booking-info mb-4">
 
+              <div><strong>Check‑In:</strong> <%= b.checkIn.toDateString() %></div>
+              <div><strong>Check‑Out:</strong> <%= b.checkOut.toDateString() %></div>
+              <div><strong>Guests:</strong> <%= b.guests %></div>
+
+            </div>
+
+            <!-- ACTIONS -->
             <% if(b.status==="pending"){ %>
-              <div class="d-flex gap-2">
+              <div class="mt-auto d-flex gap-3">
+
                 <form method="POST" action="/bookings/<%= b._id %>/approve?_method=PATCH">
-                  <button class="btn btn-success btn-sm">Approve</button>
+                  <button class="btn btn-success px-4">
+                    ✓ Approve
+                  </button>
                 </form>
 
                 <form method="POST" action="/bookings/<%= b._id %>/reject?_method=PATCH">
-                  <button class="btn btn-danger btn-sm">Reject</button>
+                  <button class="btn btn-outline-danger px-4">
+                    ✕ Reject
+                  </button>
                 </form>
+
               </div>
             <% } %>
 
@@ -49,5 +82,39 @@
 
       </div>
     </div>
+
   <% }) %>
 </div>
+
+
+<style>
+
+.booking-card{
+  border-radius:18px;
+  transition:.25s ease;
+}
+
+.booking-card:hover{
+  transform:translateY(-6px);
+  box-shadow:0 18px 40px rgba(0,0,0,.12)!important;
+}
+
+.status-badge{
+  position:absolute;
+  top:12px;
+  left:12px;
+}
+
+.price-tag{
+  font-weight:700;
+  font-size:1.1rem;
+  background:#f8f9fa;
+  padding:6px 14px;
+  border-radius:999px;
+}
+
+.booking-info div{
+  margin-bottom:4px;
+}
+
+</style>
