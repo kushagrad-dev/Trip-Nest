@@ -1,0 +1,53 @@
+<h2 class="text-center mb-4">Admin Booking Panel</h2>
+
+<div class="container">
+  <% bookings.forEach(b => { %>
+    <div class="card mb-3 shadow-sm">
+      <div class="row g-0">
+
+        <div class="col-md-4">
+          <img src="<%= b.listingId.image.url %>" class="img-fluid rounded-start" style="height:100%; object-fit:cover;">
+        </div>
+
+        <div class="col-md-8">
+          <div class="card-body">
+
+            <h5><%= b.listingId.title %></h5>
+
+            <p>
+              User: <b><%= b.userId.username %></b><br>
+              Dates: <%= b.checkIn.toDateString() %> → <%= b.checkOut.toDateString() %><br>
+              Guests: <%= b.guests %><br>
+              Total: ₹ <%= b.totalPrice.toLocaleString("en-IN") %>
+            </p>
+
+            <p>
+              Status:
+              <% if(b.status==="pending"){ %>
+                <span class="badge bg-warning text-dark">Pending</span>
+              <% } else if(b.status==="confirmed"){ %>
+                <span class="badge bg-success">Confirmed</span>
+              <% } else { %>
+                <span class="badge bg-danger">Cancelled</span>
+              <% } %>
+            </p>
+
+            <% if(b.status==="pending"){ %>
+              <div class="d-flex gap-2">
+                <form method="POST" action="/bookings/<%= b._id %>/approve?_method=PATCH">
+                  <button class="btn btn-success btn-sm">Approve</button>
+                </form>
+
+                <form method="POST" action="/bookings/<%= b._id %>/reject?_method=PATCH">
+                  <button class="btn btn-danger btn-sm">Reject</button>
+                </form>
+              </div>
+            <% } %>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  <% }) %>
+</div>

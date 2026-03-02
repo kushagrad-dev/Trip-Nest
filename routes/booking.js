@@ -13,6 +13,35 @@ const isLoggedIn = (req,res,next)=>{
   next();
 };
 
+// ---------------- ADMIN CHECK ----------------
+const isAdmin = (req,res,next)=>{
+  if(!req.user){
+    throw new ExpressError("Admin access required",403);
+  }
+
+  // allow Trip Analyst as admin even if role not set
+  if(req.user.role === "admin" || req.user.username === "Trip Analyst"){
+    return next();
+  }
+
+  throw new ExpressError("Admin access required",403);
+};
+
+router.patch("/:id/reject", isLoggedIn, isAdmin, async (req,res,next)=>{
+  try{
+    const booking = await Booking.findById(req.params.id);
+    if(!booking) throw new ExpressError("Booking not found",404);
+
+    booking.status = "cancelled";
+    await booking.save();
+
+    req.flash("success","Booking rejected");
+    res.redirect("/bookings/admin/bookings");
+  }catch(err){
+    next(err);
+  }
+});
+
 // ---------------- VALIDATE BOOKING ----------------
 const validateBooking = (req, res, next) => {
   const { error } = bookingSchema.validate(req.body);
@@ -64,7 +93,8 @@ router.post("/", isLoggedIn, validateBooking, async (req, res, next) => {
       checkIn: checkInDate,
       checkOut: checkOutDate,
       guests,
-      totalPrice
+      totalPrice,
+      status: "pending"
     });
 
     await booking.save();
@@ -88,6 +118,22 @@ router.get("/my", isLoggedIn, async (req, res, next) => {
   }
 });
 
+// ---------------- ADMIN APPROVE BOOKING ----------------
+router.patch("/:id/approve", isLoggedIn, isAdmin, async (req,res,next)=>{
+  try{
+    const booking = await Booking.findById(req.params.id);
+    if(!booking) throw new ExpressError("Booking not found",404);
+
+    booking.status = "confirmed";
+    await booking.save();
+
+    req.flash("success","Booking approved");
+    res.redirect("/admin/bookings");
+  }catch(err){
+    next(err);
+  }
+});
+
 // ---------------- CANCEL BOOKING ----------------
 router.delete("/:id", isLoggedIn, async (req, res, next) => {
   try {
@@ -98,10 +144,26 @@ router.delete("/:id", isLoggedIn, async (req, res, next) => {
       throw new ExpressError("Unauthorized action",403);
     }
 
-    await booking.deleteOne();
+    booking.status = "cancelled";
+    await booking.save();
     req.flash("success", "Booking cancelled");
     res.redirect("/bookings/my");
   } catch (err) {
+    next(err);
+  }
+});
+
+
+// ---------------- ADMIN BOOKINGS PANEL ----------------
+router.get("/admin/bookings", isLoggedIn, isAdmin, async (req,res,next)=>{
+  try{
+    const bookings = await Booking.find()
+      .populate("listingId","title image price location")
+      .populate("userId","username email")
+      .sort({ createdAt:-1 });
+
+    res.render("bookings/admin",{ bookings });
+  }catch(err){
     next(err);
   }
 });
