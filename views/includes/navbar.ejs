@@ -231,7 +231,7 @@
   /* SEARCH POSITION FIX */
   @media (max-width:767px){
     .navbar .flex-grow-1{
-      margin: top 14px;
+      margin-top: 14px;
     }
   }
 
@@ -326,22 +326,7 @@
           <% } %>
 
           <% if(currUser && (currUser.username==="Trip Analyst" || currUser.role==="admin")){ %>
-
-<div class="admin-wrapper" id="adminMenuWrap">
-  <div class="nav-link admin-btn" id="adminToggle">
-    Admin Panel
-    <span class="admin-badge">PRO</span>
-  </div>
-
-  <div class="admin-menu" id="adminMenu">
-    <a href="/admin">Dashboard</a>
-    <a href="/bookings/admin/bookings">Manage Bookings</a>
-    <a href="/listings">Manage Listings</a>
-    <a href="/admin#users">Manage Users</a>
-    <a href="/admin#reviews">Moderate Reviews</a>
-  </div>
-</div>
-
+  <a class="nav-link" href="/admin"><b>Admin Panel</b></a>
 <% } %>
 
           <a class="nav-link" href="/logout"><b>Trip out</b></a>
