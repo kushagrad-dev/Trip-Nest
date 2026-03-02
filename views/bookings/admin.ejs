@@ -58,8 +58,14 @@
 
             </div>
 
-            <!-- ACTIONS -->
+            <!-- ACTIONS + TIMER -->
             <% if(b.status==="pending"){ %>
+
+              <div class="mb-3 text-muted small">
+                Auto‑cancel in:
+                <span class="countdown" data-time="<%= new Date(b.createdAt).getTime() %>"></span>
+              </div>
+
               <div class="mt-auto d-flex gap-3">
 
                 <form method="POST" action="/bookings/<%= b._id %>/approve?_method=PATCH">
@@ -69,12 +75,13 @@
                 </form>
 
                 <form method="POST" action="/bookings/<%= b._id %>/reject?_method=PATCH">
-                  <button class="btn btn-outline-danger px-4">
-                    ✕ Reject
+                  <button class="btn btn-danger px-4">
+                    ✕ Cancel
                   </button>
                 </form>
 
               </div>
+
             <% } %>
 
           </div>
@@ -117,4 +124,33 @@
   margin-bottom:4px;
 }
 
+/* TIMER STYLE */
+.countdown{
+  font-weight:600;
+  color:#fe424d;
+}
+
 </style>
+<script>
+function updateTimers(){
+  document.querySelectorAll(".countdown").forEach(el=>{
+    const created = Number(el.dataset.time);
+    const expire = created + (24*60*60*1000);
+    const diff = expire - Date.now();
+
+    if(diff <= 0){
+      el.innerText = "Expired";
+      return;
+    }
+
+    const hrs = Math.floor(diff/1000/60/60);
+    const mins = Math.floor((diff/1000/60)%60);
+    const secs = Math.floor((diff/1000)%60);
+
+    el.innerText = `${hrs}h ${mins}m ${secs}s`;
+  });
+}
+
+setInterval(updateTimers,1000);
+updateTimers();
+</script>
