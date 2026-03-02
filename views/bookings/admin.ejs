@@ -75,22 +75,32 @@
 
               <% if(b.status==="pending"){ %>
 
-              <div class="timer-box mb-3">
-                ⏳ Auto cancels in
-                <span class="countdown" data-time="<%= new Date(b.createdAt).getTime() %>"></span>
-              </div>
+                <% if(b.listingId.status !== "approved"){ %>
 
-              <div class="mt-auto d-flex gap-2">
+                  <div class="alert alert-warning text-center mb-3">
+                    Listing must be approved before booking can be processed.
+                  </div>
 
-                <form method="POST" action="/bookings/<%= b._id %>/approve?_method=PATCH" class="flex-fill">
-                  <button class="btn btn-approve w-100">Approve</button>
-                </form>
+                <% } else { %>
 
-                <form method="POST" action="/bookings/<%= b._id %>/reject?_method=PATCH" class="flex-fill">
-                  <button class="btn btn-cancel w-100">Cancel</button>
-                </form>
+                  <div class="timer-box mb-3">
+                    ⏳ Auto cancels in
+                    <span class="countdown" data-time="<%= new Date(b.createdAt).getTime() %>"></span>
+                  </div>
 
-              </div>
+                  <div class="mt-auto d-flex gap-2">
+
+                    <form method="POST" action="/bookings/<%= b._id %>/approve?_method=PATCH" class="flex-fill">
+                      <button class="btn btn-approve w-100">Confirm</button>
+                    </form>
+
+                    <form method="POST" action="/bookings/<%= b._id %>/reject?_method=PATCH" class="flex-fill">
+                      <button class="btn btn-cancel w-100">Reject</button>
+                    </form>
+
+                  </div>
+
+                <% } %>
 
               <% } %>
 
