@@ -165,4 +165,3 @@ console.log("MAP TOKEN:", process.env.MAP_TOKEN ? "Loaded" : "Missing");
 
 //admin dashboard
 
-const adminRoutes = require("./routes/admin");
