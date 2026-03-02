@@ -3,6 +3,11 @@ const ExpressError = require("./utils/ExpressError.js");
 const { listingSchema, reviewSchema } = require("./schema.js");
 const Review = require("./models/reviews");
 
+// ---------------- SUPER ADMIN CHECK ----------------
+function isSuperAdmin(user){
+  return user && (user.role === "admin" || user.username === "Trip Analyst");
+}
+
 // ---------------- AUTH CHECK ----------------
 module.exports.isLoggedIn = (req, res, next) => {
   if (!req.isAuthenticated()) {
@@ -33,7 +38,7 @@ module.exports.isOwner = async (req, res, next) => {
       return res.redirect("/listings");
     }
 
-    if (!req.user || !listing.owner.equals(req.user._id)) {
+    if (!isSuperAdmin(req.user) && (!req.user || !listing.owner.equals(req.user._id))) {
       req.flash("error", "You are not authorized to do that!");
       return res.redirect(`/listings/${id}`);
     }
@@ -55,7 +60,7 @@ module.exports.isReviewAuthor = async (req, res, next) => {
       return res.redirect(`/listings/${id}`);
     }
 
-    if (!req.user || !review.author.equals(req.user._id)) {
+    if (!isSuperAdmin(req.user) && (!req.user || !review.author.equals(req.user._id))) {
       req.flash("error", "You are not authorized to delete this review!");
       return res.redirect(`/listings/${id}`);
     }

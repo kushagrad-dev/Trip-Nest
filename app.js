@@ -123,6 +123,10 @@ app.use("/listings", listingRoutes);
 app.use("/listings/:id/reviews", reviewRoutes);
 app.use("/", userRoutes);
 
+//admin routes
+const adminRoutes = require("./routes/admin");
+app.use("/admin", adminRoutes);
+
 // -------------------- 404 --------------------
 app.use((req, res, next) => {
   console.error("\n404 ERROR — Route Not Found");

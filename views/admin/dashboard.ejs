@@ -1,0 +1,80 @@
+<h2 class="text-center fw-bold mb-5">Super Admin Control Panel</h2>
+
+<div class="container">
+
+<!-- USERS -->
+<h4 class="mb-3">Users</h4>
+
+<% users.forEach(u=>{ %>
+<div class="card p-3 mb-2 shadow-sm d-flex flex-row justify-content-between align-items-center">
+
+  <div>
+    <b><%= u.username %></b>
+    <span class="text-muted small">(<%= u.email %>)</span>
+    <% if(u.role==="admin"){ %>
+      <span class="badge bg-success ms-2">Admin</span>
+    <% } %>
+  </div>
+
+  <div class="d-flex gap-2">
+
+    <% if(u.role!=="admin"){ %>
+      <form method="POST" action="/admin/user/<%=u._id%>/admin?_method=PATCH">
+        <button class="btn btn-warning btn-sm">Make Admin</button>
+      </form>
+    <% } %>
+
+    <form method="POST" action="/admin/user/<%=u._id%>?_method=DELETE">
+      <button class="btn btn-danger btn-sm">Delete</button>
+    </form>
+
+  </div>
+
+</div>
+<% }) %>
+
+
+<hr class="my-5">
+
+
+<!-- LISTINGS -->
+<h4 class="mb-3">Listings</h4>
+
+<% listings.forEach(l=>{ %>
+<div class="card p-3 mb-2 shadow-sm d-flex flex-row justify-content-between align-items-center">
+
+  <div>
+    <b><%= l.title %></b>
+    <span class="text-muted small">by <%= l.owner.username %></span>
+  </div>
+
+  <form method="POST" action="/admin/listing/<%=l._id%>?_method=DELETE">
+    <button class="btn btn-danger btn-sm">Delete</button>
+  </form>
+
+</div>
+<% }) %>
+
+
+<hr class="my-5">
+
+
+<!-- REVIEWS -->
+<h4 class="mb-3">Reviews</h4>
+
+<% reviews.forEach(r=>{ %>
+<div class="card p-3 mb-2 shadow-sm d-flex flex-row justify-content-between align-items-center">
+
+  <div>
+    <%= r.comment %>
+    <span class="text-muted small"> — <%= r.author.username %></span>
+  </div>
+
+  <form method="POST" action="/admin/review/<%=r._id%>?_method=DELETE">
+    <button class="btn btn-danger btn-sm">Delete</button>
+  </form>
+
+</div>
+<% }) %>
+
+</div>

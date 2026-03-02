@@ -261,6 +261,12 @@
             <a class="nav-link" href="/bookings/admin/bookings"><b>Bookings</b></a>
           <% } %>
 
+          <% if(currUser && (currUser.username==="Trip Analyst" || currUser.role==="admin")){ %>
+          <li class="nav-item">
+            <a class="nav-link" href="/admin">Admin Panel</a>
+          </li>
+          <% } %>
+
           <a class="nav-link" href="/logout"><b>Trip out</b></a>
         <% } %>
       </div>
