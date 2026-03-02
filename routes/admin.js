@@ -6,7 +6,7 @@ const Listing = require("../models/listing");
 const Review = require("../models/reviews");
 const ExpressError = require("../utils/ExpressError");
 
-const express = require("express");
+
 const Listing = require("../models/listing");
 const { isLoggedIn } = require("../middleware");
 const { isAdmin } = require("../middleware/admin");
