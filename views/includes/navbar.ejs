@@ -1,4 +1,48 @@
 <style>
+  /* NOTIFICATION BELL */
+  .notification-wrapper{
+    position:relative;
+    margin-right:1rem;
+    cursor:pointer;
+  }
+
+  .notification-badge{
+    position:absolute;
+    top:-4px;
+    right:-6px;
+    background:#fe424d;
+    color:#fff;
+    font-size:.65rem;
+    padding:2px 6px;
+    border-radius:50px;
+  }
+
+  .notification-dropdown{
+    display:none;
+    position:absolute;
+    right:0;
+    top:130%;
+    width:260px;
+    background:#fff;
+    border-radius:12px;
+    box-shadow:0 10px 25px rgba(0,0,0,0.12);
+    padding:.75rem;
+    z-index:999;
+  }
+
+  .notification-dropdown.show{
+    display:block;
+  }
+
+  .notification-item{
+    padding:.5rem;
+    border-radius:8px;
+    font-size:.9rem;
+  }
+
+  .notification-item:hover{
+    background:#f8f9fa;
+  }
   .btn-outline-danger {
     background-color: #fe424d;
     border-color: #fe424d;
@@ -195,10 +239,28 @@
       <div class="navbar-nav ms-auto bg-white">
         <a class="nav-link" href="/listings/new">TripNest your home</a>
 
+        <% if(currUser){ %>
+          <div class="notification-wrapper" id="notifBell">
+            <i class="fa-solid fa-bell"></i>
+            <span class="notification-badge" id="notifCount">3</span>
+
+            <div class="notification-dropdown" id="notifDropdown">
+              <div class="notification-item">New booking request</div>
+              <div class="notification-item">Booking approved</div>
+              <div class="notification-item">New review received</div>
+            </div>
+          </div>
+        <% } %>
+
         <% if (!currUser) { %>
           <a class="nav-link" href="/signup"><b>Trip up</b></a>
           <a class="nav-link" href="/login"><b>Trip in</b></a>
         <% } else { %>
+
+          <% if(currUser.role === "admin" || currUser.username === "Trip Analyst"){ %>
+            <a class="nav-link" href="/bookings/admin/bookings"><b>Bookings</b></a>
+          <% } %>
+
           <a class="nav-link" href="/logout"><b>Trip out</b></a>
         <% } %>
       </div>
@@ -226,6 +288,21 @@ document.addEventListener("DOMContentLoaded", () => {
     if(window.scrollY>20) nav.classList.add("scrolled");
     else nav.classList.remove("scrolled");
   });
+
+  // NOTIFICATION TOGGLE
+  const bell = document.getElementById("notifBell");
+  const dropdown = document.getElementById("notifDropdown");
+
+  if(bell && dropdown){
+    bell.addEventListener("click", (e)=>{
+      e.stopPropagation();
+      dropdown.classList.toggle("show");
+    });
+
+    document.addEventListener("click", ()=>{
+      dropdown.classList.remove("show");
+    });
+  }
 
 });
 </script>
