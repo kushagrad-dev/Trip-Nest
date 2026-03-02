@@ -5,16 +5,15 @@ const User = require("../models/user");
 const Listing = require("../models/listing");
 const Review = require("../models/reviews");
 const ExpressError = require("../utils/ExpressError");
+// middleware
 
-
-const Listing = require("../models/listing");
 const { isLoggedIn } = require("../middleware");
 const { isAdmin } = require("../middleware/admin");
 
 // SUPER ADMIN CHECK
 function isSuperAdmin(req,res,next){
   if(!req.user || (req.user.username!=="Trip Analyst" && req.user.role!=="admin")){
-    throw new ExpressError("Super admin access required",403);
+    throw new ExpressError("admin access required",403);
   }
   next();
 }
