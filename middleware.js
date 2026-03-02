@@ -8,6 +8,14 @@ function isSuperAdmin(user){
   return user && (user.role === "admin" || user.username === "Trip Analyst");
 }
 
+module.exports.isAdmin = (req,res,next)=>{
+  if(!req.user || req.user.username !== "Trip Analyst"){
+    req.flash("error","Admin access only");
+    return res.redirect("/listings");
+  }
+  next();
+};
+
 // ---------------- AUTH CHECK ----------------
 module.exports.isLoggedIn = (req, res, next) => {
   if (!req.isAuthenticated()) {

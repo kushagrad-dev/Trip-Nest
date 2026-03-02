@@ -1,109 +1,137 @@
-<h2 class="text-center mb-4">Admin Booking Panel</h2>
-<h2 class="text-center fw-bold mb-5" style="letter-spacing:.5px;">Admin Booking Dashboard</h2>
+<div class="admin-header text-center mb-5">
+  <h1 class="fw-bold">Booking Control Center</h1>
+  <p class="text-muted">Manage, approve and monitor all reservations</p>
+</div>
 
 <div class="container">
 
   <% if(bookings.length === 0){ %>
-    <div class="text-center text-muted fs-5 mt-5">
-      No bookings yet.
+    <div class="empty-state text-center">
+      <div class="empty-icon">📭</div>
+      <h4>No Bookings Yet</h4>
+      <p class="text-muted">When users make bookings they will appear here.</p>
     </div>
   <% } %>
 
+  <div class="row g-4">
+
   <% bookings.forEach(b => { %>
 
-    <div class="card mb-4 border-0 shadow booking-card">
+    <div class="col-xl-6">
+      <div class="card booking-card border-0 h-100">
 
-      <div class="row g-0">
+        <div class="row g-0 h-100">
 
-        <!-- IMAGE -->
-        <div class="col-md-4 position-relative">
-          <img 
-            src="<%= b.listingId.image.url %>" 
-            class="img-fluid rounded-start h-100 w-100"
-            style="object-fit:cover;"
-          >
+          <!-- IMAGE -->
+          <div class="col-md-5 position-relative">
+            <img
+              src="<%= b.listingId.image.url %>"
+              class="img-fluid rounded-start h-100 w-100"
+              style="object-fit:cover;"
+            >
 
-          <!-- STATUS BADGE -->
-          <div class="status-badge">
-            <% if(b.status==="pending"){ %>
-              <span class="badge bg-warning text-dark px-3 py-2">Pending</span>
-            <% } else if(b.status==="confirmed"){ %>
-              <span class="badge bg-success px-3 py-2">Confirmed</span>
-            <% } else { %>
-              <span class="badge bg-danger px-3 py-2">Cancelled</span>
-            <% } %>
+            <div class="status-badge">
+              <% if(b.status==="pending"){ %>
+                <span class="badge badge-pending">Pending</span>
+              <% } else if(b.status==="confirmed"){ %>
+                <span class="badge badge-confirmed">Confirmed</span>
+              <% } else { %>
+                <span class="badge badge-cancelled">Cancelled</span>
+              <% } %>
+            </div>
           </div>
-        </div>
 
-        <!-- CONTENT -->
-        <div class="col-md-8">
-          <div class="card-body d-flex flex-column h-100">
 
-            <div class="d-flex justify-content-between align-items-start mb-2">
-              <h4 class="fw-semibold mb-0"><%= b.listingId.title %></h4>
-              <span class="price-tag">
-                ₹ <%= b.totalPrice.toLocaleString("en-IN") %>
-              </span>
-            </div>
+          <!-- CONTENT -->
+          <div class="col-md-7">
+            <div class="card-body d-flex flex-column h-100">
 
-            <div class="text-muted small mb-3">
-              Booked by <b><%= b.userId.username %></b>
-            </div>
+              <div class="d-flex justify-content-between align-items-start">
+                <h5 class="fw-bold mb-1"><%= b.listingId.title %></h5>
+                <div class="price-pill">
+                  ₹ <%= b.totalPrice.toLocaleString("en-IN") %>
+                </div>
+              </div>
 
-            <div class="booking-info mb-4">
+              <div class="small text-muted mb-3">
+                Guest: <b><%= b.userId.username %></b>
+              </div>
 
-              <div><strong>Check‑In:</strong> <%= b.checkIn.toDateString() %></div>
-              <div><strong>Check‑Out:</strong> <%= b.checkOut.toDateString() %></div>
-              <div><strong>Guests:</strong> <%= b.guests %></div>
+              <div class="info-grid mb-3">
+                <div>
+                  <span class="label">Check‑In</span>
+                  <div class="value"><%= b.checkIn.toDateString() %></div>
+                </div>
+                <div>
+                  <span class="label">Check‑Out</span>
+                  <div class="value"><%= b.checkOut.toDateString() %></div>
+                </div>
+                <div>
+                  <span class="label">Guests</span>
+                  <div class="value"><%= b.guests %></div>
+                </div>
+              </div>
 
-            </div>
 
-            <!-- ACTIONS + TIMER -->
-            <% if(b.status==="pending"){ %>
+              <% if(b.status==="pending"){ %>
 
-              <div class="mb-3 text-muted small">
-                Auto‑cancel in:
+              <div class="timer-box mb-3">
+                ⏳ Auto cancels in
                 <span class="countdown" data-time="<%= new Date(b.createdAt).getTime() %>"></span>
               </div>
 
-              <div class="mt-auto d-flex gap-3">
+              <div class="mt-auto d-flex gap-2">
 
-                <form method="POST" action="/bookings/<%= b._id %>/approve?_method=PATCH">
-                  <button class="btn btn-success px-4">
-                    ✓ Approve
-                  </button>
+                <form method="POST" action="/bookings/<%= b._id %>/approve?_method=PATCH" class="flex-fill">
+                  <button class="btn btn-approve w-100">Approve</button>
                 </form>
 
-                <form method="POST" action="/bookings/<%= b._id %>/reject?_method=PATCH">
-                  <button class="btn btn-danger px-4">
-                    ✕ Cancel
-                  </button>
+                <form method="POST" action="/bookings/<%= b._id %>/reject?_method=PATCH" class="flex-fill">
+                  <button class="btn btn-cancel w-100">Cancel</button>
                 </form>
 
               </div>
 
-            <% } %>
+              <% } %>
 
+              <div class="mt-2 d-flex gap-2">
+                <form method="POST" action="/admin/listings/<%= b.listingId._id %>/approve?_method=PATCH" class="flex-fill">
+                  <button class="btn btn-success w-100 btn-sm">Approve Listing</button>
+                </form>
+
+                <form method="POST" action="/admin/listings/<%= b.listingId._id %>/reject?_method=PATCH" class="flex-fill">
+                  <button class="btn btn-outline-danger w-100 btn-sm">Reject Listing</button>
+                </form>
+              </div>
+
+            </div>
           </div>
-        </div>
 
+        </div>
       </div>
     </div>
 
   <% }) %>
+
+  </div>
 </div>
 
 
 <style>
 
+.admin-header h1{
+  letter-spacing:.5px;
+}
+
 .booking-card{
-  border-radius:18px;
-  transition:.25s ease;
+  border-radius:20px;
+  box-shadow:0 15px 40px rgba(0,0,0,.08);
+  transition:.3s;
 }
 
 .booking-card:hover{
-  transform:translateY(-6px);
-  box-shadow:0 18px 40px rgba(0,0,0,.12)!important;
+  transform:translateY(-8px);
+  box-shadow:0 25px 60px rgba(0,0,0,.15);
 }
 
 .status-badge{
@@ -112,25 +140,88 @@
   left:12px;
 }
 
-.price-tag{
-  font-weight:700;
-  font-size:1.1rem;
-  background:#f8f9fa;
-  padding:6px 14px;
+.badge{
+  padding:6px 12px;
   border-radius:999px;
-}
-
-.booking-info div{
-  margin-bottom:4px;
-}
-
-/* TIMER STYLE */
-.countdown{
+  font-size:.7rem;
   font-weight:600;
-  color:#fe424d;
+}
+
+.badge-pending{background:#fff3cd;color:#856404;}
+.badge-confirmed{background:#d4edda;color:#155724;}
+.badge-cancelled{background:#f8d7da;color:#721c24;}
+
+.price-pill{
+  background:#f1f3f5;
+  padding:5px 14px;
+  border-radius:999px;
+  font-weight:700;
+  font-size:.95rem;
+}
+
+.info-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:.6rem;
+  font-size:.85rem;
+}
+
+.label{
+  color:#888;
+  font-size:.7rem;
+  text-transform:uppercase;
+}
+
+.value{
+  font-weight:600;
+}
+
+.timer-box{
+  background:#fff3cd;
+  border-radius:10px;
+  padding:.4rem .7rem;
+  font-size:.85rem;
+  font-weight:500;
+}
+
+.btn-approve{
+  background:#28a745;
+  border:none;
+  color:#fff;
+  font-weight:600;
+}
+
+.btn-approve:hover{
+  background:#218838;
+}
+
+.btn-cancel{
+  background:#dc3545;
+  border:none;
+  color:#fff;
+  font-weight:600;
+}
+
+.btn-cancel:hover{
+  background:#c82333;
+}
+
+.countdown{
+  font-weight:700;
+  margin-left:6px;
+}
+
+.empty-state{
+  padding:80px 20px;
+}
+
+.empty-icon{
+  font-size:50px;
+  margin-bottom:10px;
 }
 
 </style>
+
 <script>
 function updateTimers(){
   document.querySelectorAll(".countdown").forEach(el=>{

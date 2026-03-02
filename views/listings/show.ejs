@@ -9,7 +9,17 @@
     <div class="col-lg-8 col-md-10">
 
       <!-- TITLE -->
-      <h3 class="text-center mb-4"><%= listing.title %></h3>
+      <h3 class="text-center mb-2"><%= listing.title %></h3>
+
+      <div class="text-center mb-3">
+        <% if(listing.status === "pending"){ %>
+          <span class="badge bg-warning text-dark">Pending Approval</span>
+        <% } else if(listing.status === "approved"){ %>
+          <span class="badge bg-success">Approved</span>
+        <% } else if(listing.status === "rejected"){ %>
+          <span class="badge bg-danger">Rejected</span>
+        <% } %>
+      </div>
 
       <!-- LISTING CARD -->
       <div class="card border-0 shadow-none mb-3">

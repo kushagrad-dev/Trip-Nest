@@ -43,6 +43,12 @@ const listingSchema = new Schema({
     type: String
   },
 
+  status: {
+    type: String,
+    enum: ["pending", "approved", "rejected"],
+    default: "pending"
+  },
+
   // MAPBOX
   geometry: {
     type: {

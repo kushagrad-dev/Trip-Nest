@@ -6,6 +6,11 @@ const Listing = require("../models/listing");
 const Review = require("../models/reviews");
 const ExpressError = require("../utils/ExpressError");
 
+const express = require("express");
+const Listing = require("../models/listing");
+const { isLoggedIn } = require("../middleware");
+const { isAdmin } = require("../middleware/admin");
+
 // SUPER ADMIN CHECK
 function isSuperAdmin(req,res,next){
   if(!req.user || (req.user.username!=="Trip Analyst" && req.user.role!=="admin")){
@@ -45,6 +50,22 @@ router.delete("/listing/:id", isSuperAdmin, async (req,res)=>{
 router.delete("/review/:id", isSuperAdmin, async (req,res)=>{
   await Review.findByIdAndDelete(req.params.id);
   res.redirect("/admin");
+});
+
+//admin routes for approving/rejecting listings
+// APPROVE LISTING
+router.patch("/listings/:id/approve", isLoggedIn, isAdmin, async(req,res)=>{
+  await Listing.findByIdAndUpdate(req.params.id,{status:"approved"});
+  req.flash("success","Listing approved");
+  res.redirect("back");
+});
+
+
+// REJECT LISTING
+router.patch("/listings/:id/reject", isLoggedIn, isAdmin, async(req,res)=>{
+  await Listing.findByIdAndUpdate(req.params.id,{status:"rejected"});
+  req.flash("error","Listing rejected");
+  res.redirect("back");
 });
 
 module.exports = router;
