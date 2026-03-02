@@ -8,7 +8,12 @@ const ExpressError = require("../utils/ExpressError");
 // middleware
 
 const { isLoggedIn } = require("../middleware");
-const { isAdmin } = require("../middleware/admin");
+function isAdmin(req,res,next){
+  if(!req.user || (req.user.username !== "Trip Analyst" && req.user.role !== "admin")){
+    throw new ExpressError("Admin access required",403);
+  }
+  next();
+}
 
 // SUPER ADMIN CHECK
 function isSuperAdmin(req,res,next){
