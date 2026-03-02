@@ -16,6 +16,7 @@
   "dependencies": {
     "@mapbox/mapbox-sdk": "^0.16.2",
     "cloudinary": "^1.41.3",
+    "compression": "^1.8.1",
     "connect-flash": "^0.1.1",
     "connect-mongo": "^6.0.0",
     "dotenv": "^17.2.4",
@@ -24,6 +25,7 @@
     "express": "^5.2.1",
     "express-session": "^1.18.2",
     "fuse.js": "^7.1.0",
+    "helmet": "^8.1.0",
     "joi": "^18.0.2",
     "mate": "^0.21.0",
     "method-override": "^3.0.0",
