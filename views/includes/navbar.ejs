@@ -1,4 +1,32 @@
 <style>
+  /* PREMIUM ADMIN BUTTON */
+  .admin-btn{
+    background:linear-gradient(45deg,#111,#444);
+    color:#fff !important;
+    padding:6px 14px !important;
+    border-radius:999px;
+    font-weight:600;
+    letter-spacing:.3px;
+    box-shadow:0 4px 14px rgba(0,0,0,.25);
+    transition:.25s ease;
+  }
+
+  .admin-btn:hover{
+    transform:translateY(-2px) scale(1.05);
+    box-shadow:0 8px 22px rgba(0,0,0,.35);
+    background:linear-gradient(45deg,#000,#222);
+  }
+
+  /* PREMIUM ADMIN BADGE */
+  .admin-badge{
+    background:linear-gradient(45deg,#ff7a82,#fe424d);
+    color:#fff;
+    font-size:.6rem;
+    padding:2px 6px;
+    border-radius:6px;
+    margin-left:6px;
+    vertical-align:middle;
+  }
   /* NOTIFICATION BELL */
   .notification-wrapper{
     position:relative;
@@ -146,6 +174,42 @@
     transition:.3s ease;
   }
 
+/* ADMIN DROPDOWN PANEL */
+.admin-menu{
+  position:absolute;
+  top:120%;
+  right:0;
+  width:220px;
+  background:#fff;
+  border-radius:14px;
+  box-shadow:0 12px 30px rgba(0,0,0,.15);
+  padding:.6rem;
+  display:none;
+  z-index:1000;
+}
+
+.admin-menu.show{
+  display:block;
+}
+
+.admin-menu a{
+  display:block;
+  padding:.5rem .7rem;
+  border-radius:8px;
+  font-size:.92rem;
+  text-decoration:none;
+  color:#333;
+  transition:.2s;
+}
+
+.admin-menu a:hover{
+  background:#f1f3f5;
+  transform:translateX(3px);
+}
+
+.admin-wrapper{
+  position:relative;
+}
 </style>
 <style>
 
@@ -262,10 +326,23 @@
           <% } %>
 
           <% if(currUser && (currUser.username==="Trip Analyst" || currUser.role==="admin")){ %>
-          <li class="nav-item">
-            <a class="nav-link" href="/admin">Admin Panel</a>
-          </li>
-          <% } %>
+
+<div class="admin-wrapper" id="adminMenuWrap">
+  <div class="nav-link admin-btn" id="adminToggle">
+    Admin Panel
+    <span class="admin-badge">PRO</span>
+  </div>
+
+  <div class="admin-menu" id="adminMenu">
+    <a href="/admin">Dashboard</a>
+    <a href="/bookings/admin/bookings">Manage Bookings</a>
+    <a href="/listings">Manage Listings</a>
+    <a href="/admin#users">Manage Users</a>
+    <a href="/admin#reviews">Moderate Reviews</a>
+  </div>
+</div>
+
+<% } %>
 
           <a class="nav-link" href="/logout"><b>Trip out</b></a>
         <% } %>
@@ -308,7 +385,21 @@ document.addEventListener("DOMContentLoaded", () => {
     document.addEventListener("click", ()=>{
       dropdown.classList.remove("show");
     });
-  }
+  });
 
+  // ADMIN DROPDOWN
+  const adminBtn = document.getElementById("adminToggle");
+  const adminMenu = document.getElementById("adminMenu");
+
+  if(adminBtn && adminMenu){
+    adminBtn.addEventListener("click",(e)=>{
+      e.stopPropagation();
+      adminMenu.classList.toggle("show");
+    });
+
+    document.addEventListener("click",()=>{
+      adminMenu.classList.remove("show");
+    });
+  }
 });
 </script>
