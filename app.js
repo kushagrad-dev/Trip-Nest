@@ -30,15 +30,25 @@ const adminRoutes = require("./routes/admin");
 
 const dbUrl = process.env.ATLASDB_URL;
 
+if (!dbUrl) {
+  console.error("ATLASDB_URL is missing in environment variables");
+  process.exit(1);
+}
+
 app.get("/privacy", (req,res)=>{
   res.render("includes/legal");
 });
 
 // -------------------- DB --------------------
 async function main() {
-  await mongoose.connect(dbUrl,{
-    serverSelectionTimeoutMS:5000
-  });
+  try {
+    await mongoose.connect(dbUrl, {
+      serverSelectionTimeoutMS: 5000,
+    });
+  } catch (err) {
+    console.error("MongoDB connection failed:", err.message);
+    process.exit(1);
+  }
 }
 main()
   .then(() => console.log("Connected to DB"))
