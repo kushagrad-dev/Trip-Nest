@@ -83,9 +83,10 @@ const sessionOptions = {
   resave: false,
   saveUninitialized: false,
   cookie: {
-    expires: Date.now() + 7 * 24 * 60 * 60 * 1000,
+    expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
     maxAge: 7 * 24 * 60 * 60 * 1000,
     httpOnly: true,
+    sameSite: "lax", // sameSite is set to "lax" to allow cookies on same-site and top-level navigation, but block them on cross-site subrequests, providing a good balance of security and usability for most applications.
     secure: process.env.NODE_ENV === "production"
   },
 };
