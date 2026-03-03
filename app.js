@@ -14,7 +14,7 @@ const path = require("path");
 const methodOverride = require("method-override");
 const ejsMate = require("ejs-mate");
 const session = require("express-session");
-const MongoStoreLib = require("connect-mongo");
+const MongoStore = require("connect-mongo");
 const flash = require("connect-flash");
 const passport = require("passport");
 const LocalStrategy = require("passport-local");
@@ -76,26 +76,14 @@ app.use(compression());
 
 // -------------------- SESSION STORE --------------------
 
-// mongoose connect session is used for session tracking it tracks and says to login after 24hrs again
-let store;
-
-// Support both connect-mongo v3 and v4+
-if (typeof MongoStoreLib.create === "function") {
-  // v4+
-  store = MongoStoreLib.create({
-    mongoUrl: dbUrl,
-    crypto: { secret: process.env.SESSION_SECRET },
-    touchAfter: 24 * 3600,
-  });
-} else {
-  // v3
-  const MongoStore = MongoStoreLib(session);
-  store = new MongoStore({
-    url: dbUrl,
+// mongoose connect session store (v6)
+const store = MongoStore.create({
+  mongoUrl: dbUrl,
+  crypto: {
     secret: process.env.SESSION_SECRET,
-    touchAfter: 24 * 3600,
-  });
-}
+  },
+  touchAfter: 24 * 3600,
+});
 
 store.on("error", (err) =>{
   console.log("Error in Mongo session store", err);
