@@ -85,13 +85,15 @@ app.use(
           "'self'",
           "https://api.mapbox.com",
           "https://cdn.jsdelivr.net",
-          "'unsafe-inline'"
+          "'unsafe-inline'",
+          "https://cdnjs.cloudflare.com"
         ],
         styleSrc: [
           "'self'",
           "https://api.mapbox.com",
           "https://cdn.jsdelivr.net",
-          "'unsafe-inline'"
+          "'unsafe-inline'",
+          "https://cdnjs.cloudflare.com"
         ],
         imgSrc: [
           "'self'",
@@ -99,7 +101,8 @@ app.use(
           "blob:",
           "https://res.cloudinary.com",
           "https://api.mapbox.com",
-          "https://*.mapbox.com"
+          "https://*.mapbox.com",
+          "https://cdn.jsdelivr.net"
         ],
         connectSrc: [
           "'self'",
@@ -108,7 +111,9 @@ app.use(
         ],
         fontSrc: [
           "'self'",
-          "https://fonts.gstatic.com"
+          "https://fonts.gstatic.com",
+          "https://cdnjs.cloudflare.com",
+          "https://cdn.jsdelivr.net"
         ]
       }
     }
