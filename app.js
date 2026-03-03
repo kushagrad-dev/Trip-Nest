@@ -93,7 +93,6 @@ if (process.env.NODE_ENV === "production") {
 }
 
 const sessionOptions = {
-  store: process.env.NODE_ENV === "production" ? store : undefined,
   secret: process.env.SESSION_SECRET || "fallbacksecret",
   resave: false,
   saveUninitialized: false,
@@ -104,6 +103,11 @@ const sessionOptions = {
     secure: process.env.NODE_ENV === "production",
   },
 };
+
+// Only attach Mongo store in production
+if (process.env.NODE_ENV === "production" && store) {
+  sessionOptions.store = store;
+}
 
 app.use(session(sessionOptions));
 
