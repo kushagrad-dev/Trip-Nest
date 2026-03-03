@@ -75,7 +75,46 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 const helmet = require("helmet");
 const compression = require("compression");
-app.use(helmet());
+
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: [
+          "'self'",
+          "https://api.mapbox.com",
+          "https://cdn.jsdelivr.net",
+          "'unsafe-inline'"
+        ],
+        styleSrc: [
+          "'self'",
+          "https://api.mapbox.com",
+          "https://cdn.jsdelivr.net",
+          "'unsafe-inline'"
+        ],
+        imgSrc: [
+          "'self'",
+          "data:",
+          "blob:",
+          "https://res.cloudinary.com",
+          "https://api.mapbox.com",
+          "https://*.mapbox.com"
+        ],
+        connectSrc: [
+          "'self'",
+          "https://api.mapbox.com",
+          "https://events.mapbox.com"
+        ],
+        fontSrc: [
+          "'self'",
+          "https://fonts.gstatic.com"
+        ]
+      }
+    }
+  })
+);
+
 app.use(compression());
 
 // -------------------- SESSION STORE --------------------
