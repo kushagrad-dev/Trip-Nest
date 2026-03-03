@@ -75,33 +75,35 @@ app.use(helmet());
 app.use(compression());
 
 // -------------------- SESSION STORE --------------------
+let store;
 
-// mongoose connect session is used for session tracking it tracks and says to login after 24hrs again
-const store = MongoStore.create({
-  mongoUrl: dbUrl,
-  crypto: { secret: process.env.SESSION_SECRET },
-  touchAfter: 24 * 3600
-});
+if (process.env.NODE_ENV === "production") {
+  store = MongoStore.create({
+    mongoUrl: dbUrl,
+    collectionName: "sessions",
+    crypto: {
+      secret: process.env.SESSION_SECRET || "fallbacksecret",
+    },
+    touchAfter: 24 * 3600,
+  });
 
-store.on("error", (err) =>{
-  console.log("Error in Mongo session store", err);
-})
+  store.on("error", (err) => {
+    console.error("Mongo Session Store Error:", err);
+  });
+}
 
 const sessionOptions = {
-  store,
+  store: process.env.NODE_ENV === "production" ? store : undefined,
   secret: process.env.SESSION_SECRET || "fallbacksecret",
   resave: false,
   saveUninitialized: false,
   cookie: {
-    expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
     maxAge: 7 * 24 * 60 * 60 * 1000,
     httpOnly: true,
-    sameSite: "lax", // sameSite is set to "lax" to allow cookies on same-site and top-level navigation, but block them on cross-site subrequests, providing a good balance of security and usability for most applications.
-    secure: process.env.NODE_ENV === "production"
+    sameSite: "lax",
+    secure: process.env.NODE_ENV === "production",
   },
 };
-
-
 
 app.use(session(sessionOptions));
 
