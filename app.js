@@ -76,7 +76,19 @@ app.use(compression());
 
 // -------------------- SESSION STORE --------------------
 
+// mongoose connect session is used for session tracking it tracks and says to login after 24hrs again
+const store = MongoStore.create({
+  mongoUrl: dbUrl,
+  crypto: { secret: process.env.SESSION_SECRET },
+  touchAfter: 24 * 3600
+});
+
+store.on("error", (err) =>{
+  console.log("Error in Mongo session store", err);
+})
+
 const sessionOptions = {
+  store,
   secret: process.env.SESSION_SECRET || "fallbacksecret",
   resave: false,
   saveUninitialized: false,
