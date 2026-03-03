@@ -67,7 +67,11 @@ app.engine("ejs", ejsMate);
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json({limit:"10kb"}));
 app.use(methodOverride("_method"));
+
 app.use(express.static(path.join(__dirname, "public")));
+
+// Serve uploaded images (important for listings page)
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 const helmet = require("helmet");
 const compression = require("compression");
