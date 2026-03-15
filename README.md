@@ -12,15 +12,15 @@ Trip-Nest is a full-stack web application built with **Node.js**, **Express**, a
 
 ##  Features
 
-- 🔐 **User Authentication** — Secure sign-up, login, and logout with session management
-- 🏠 **Listings** — Create, read, update, and delete vacation property listings
-- 📸 **Image Uploads** — Upload and manage listing photos via **Cloudinary**
-- ⭐ **Reviews** — Authenticated users can post and delete reviews on listings
-- 🛡️ **Authorization** — Only listing/review owners can edit or delete their content
-- ✅ **Input Validation** — Server-side validation using **Joi** schemas
-- 🗺️ **Interactive Maps** — Location display powered by the Mapbox API
-- 💅 **Responsive UI** — Built with Bootstrap and custom CSS for a clean, mobile-friendly experience
-- 🔒 **Flash Messages** — Real-time success and error notifications
+- **User Authentication** — Secure sign-up, login, and logout with session management
+- **Listings** — Create, read, update, and delete vacation property listings
+- **Image Uploads** — Upload and manage listing photos via **Cloudinary**
+- **Reviews** — Authenticated users can post and delete reviews on listings
+- **Authorization** — Only listing/review owners can edit or delete their content
+- **Input Validation** — Server-side validation using **Joi** schemas
+- **Interactive Maps** — Location display powered by the Mapbox API
+- **Responsive UI** — Built with Bootstrap and custom CSS for a clean, mobile-friendly experience
+- **Flash Messages** — Real-time success and error notifications
 
 ---
 
@@ -65,7 +65,7 @@ Trip-Nest/
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 
