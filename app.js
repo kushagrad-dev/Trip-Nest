@@ -83,6 +83,7 @@ app.use(
         defaultSrc: ["'self'"],
         scriptSrc: [
           "'self'",
+          "blob:",
           "https://api.mapbox.com",
           "https://cdn.jsdelivr.net",
           "'unsafe-inline'",
@@ -93,7 +94,8 @@ app.use(
           "https://api.mapbox.com",
           "https://cdn.jsdelivr.net",
           "'unsafe-inline'",
-          "https://cdnjs.cloudflare.com"
+          "https://cdnjs.cloudflare.com",
+          "https://fonts.googleapis.com"
         ],
         imgSrc: [
           "'self'",
@@ -107,7 +109,12 @@ app.use(
         connectSrc: [
           "'self'",
           "https://api.mapbox.com",
-          "https://events.mapbox.com"
+          "https://events.mapbox.com",
+          "https://cdn.jsdelivr.net"
+        ],
+        workerSrc: [
+          "'self'",
+          "blob:"
         ],
         fontSrc: [
           "'self'",
