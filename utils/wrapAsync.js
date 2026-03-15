@@ -15,7 +15,7 @@ module.exports = (fn) => {
                 console.error("Stack Trace:\n", err.stack);
             }
 
-            console.error("===== END ERROR LOG ===== 🚨\n");
+            console.error("END ERROR LOG \n");
             next(err);
         }
     };

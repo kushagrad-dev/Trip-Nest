@@ -42,7 +42,7 @@ const bookingSchema = new mongoose.Schema({
 });
 
 
-// ---------------- CHECK AVAILABILITY STATIC METHOD ----------------
+// ---------------- CHECK AVAILABILITY ----------------
 bookingSchema.statics.isAvailable = async function(listingId, checkIn, checkOut) {
   const conflict = await this.findOne({
     listingId,
@@ -54,7 +54,7 @@ bookingSchema.statics.isAvailable = async function(listingId, checkIn, checkOut)
 };
 
 
-// ---------------- AUTO VALIDATE DATES BEFORE SAVE ----------------
+// ---------------- VALIDATE DATES BEFORE SAVE ----------------
 bookingSchema.pre("save", function(next) {
 
   if (!this.checkIn || !this.checkOut) {
@@ -73,7 +73,7 @@ bookingSchema.pre("save", function(next) {
 });
 
 
-// ---------------- CALCULATE NIGHTS VIRTUAL ----------------
+// ---------------- CALCULATE NIGHTS ----------------
 bookingSchema.virtual("nights").get(function(){
   const diff = this.checkOut - this.checkIn;
   return Math.ceil(diff / (1000 * 60 * 60 * 24));

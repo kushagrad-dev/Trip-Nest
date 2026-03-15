@@ -4,7 +4,6 @@ const ExpressError = require("../utils/ExpressError");
 
 module.exports.createReview = async (req, res, next) => {
   try {
-    console.log("\nCREATE REVIEW STARTED");
     console.log("Listing ID:", req.params.id);
     console.log("User:", req.user?._id);
     console.log("Body:", req.body);
@@ -31,7 +30,7 @@ module.exports.createReview = async (req, res, next) => {
     res.redirect(`/listings/${listing._id}`);
 
   } catch (err) {
-    console.error("\nERROR IN CREATE REVIEW");
+
     console.error("Message:", err.message);
     if (err.stack) console.error(err.stack);
     next(err);
@@ -40,7 +39,7 @@ module.exports.createReview = async (req, res, next) => {
 
 module.exports.deleteReview = async (req, res, next) => {
   try {
-    console.log("\n🗑 DELETE REVIEW STARTED");
+
     console.log("Listing ID:", req.params.id);
     console.log("Review ID:", req.params.reviewId);
 

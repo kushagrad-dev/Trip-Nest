@@ -21,7 +21,7 @@ const { storage } = require("../cloudConfig.js"); // cloudinary storage configur
 
 const upload = multer({
   storage,
-  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
+  limits: { fileSize: 50 * 1024 * 1024 }, // 50MB limit
   fileFilter: (req, file, cb) => {
     if (file.mimetype.startsWith("image/")) {
       cb(null, true);
@@ -131,7 +131,7 @@ router.route("/")
   );
 
 // NEW
-router.get("/new", isLoggedIn, (req,res,next)=>{console.log("➕ New listing form opened"); next();}, wrapAsync(listingController.renderNewForm));
+router.get("/new", isLoggedIn, (req,res,next)=>{console.log(" New listing form opened"); next();}, wrapAsync(listingController.renderNewForm));
 
 // LIVE SEARCH SUGGESTIONS API
 router.get("/suggest", async (req,res)=>{
@@ -182,13 +182,13 @@ router.get("/search", (req,res)=>{
 });
 
 // EDIT
-router.get("/:id/edit", isLoggedIn, isOwner, (req,res,next)=>{console.log("📝 Edit form for", req.params.id); next();}, wrapAsync(listingController.renderEditForm));
+router.get("/:id/edit", isLoggedIn, isOwner, (req,res,next)=>{console.log(" Edit form for", req.params.id); next();}, wrapAsync(listingController.renderEditForm));
 
 // SHOW + UPDATE + DELETE
 router.route("/:id")
   .get((req,res,next)=>{console.log(" Show listing", req.params.id); next();}, wrapAsync(listingController.showListing))
-  .put(isLoggedIn, isOwner, uploadMiddleware, validateListing, (req,res,next)=>{console.log("✏️ Update listing", req.params.id); next();}, wrapAsync(listingController.updateListing))
-  .delete(isLoggedIn, isOwner, (req,res,next)=>{console.log("🗑 Delete listing", req.params.id); next();}, wrapAsync(listingController.deleteListing));
+  .put(isLoggedIn, isOwner, uploadMiddleware, validateListing, (req,res,next)=>{console.log(" Update listing", req.params.id); next();}, wrapAsync(listingController.updateListing))
+  .delete(isLoggedIn, isOwner, (req,res,next)=>{console.log("Delete listing", req.params.id); next();}, wrapAsync(listingController.deleteListing));
 
 // ---------------- ERROR LOGGER ----------------
 router.use((err, req, res, next) => {

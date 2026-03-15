@@ -210,11 +210,6 @@ document.addEventListener("DOMContentLoaded", () => {
           Loading map...
         </div>
 
-        
-        <!-- Directions Button -->
-        <button id="map-directions" class="map-directions-btn">
-          Get Directions
-        </button>
 
       </div>
       <style>
@@ -242,23 +237,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
         
 
-        .map-directions-btn {
-          position: absolute;
-          top: 10px;
-          right: 60px;
-          background: #000;
-          color: #fff;
-          border: none;
-          padding: 6px 14px;
-          border-radius: 20px;
-          font-size: 13px;
-          cursor: pointer;
-          z-index: 12;
-        }
-
-        .map-directions-btn:hover {
-          background: #333;
-        }
       </style>
     </div>
   </div>
@@ -268,18 +246,6 @@ document.addEventListener("DOMContentLoaded", () => {
   window.addEventListener("load", () => {
     const loader = document.getElementById("map-loading");
     if (loader) loader.style.display = "none";
-
-    const btn = document.getElementById("map-directions");
-    const map = document.getElementById("map");
-
-    if (btn && map) {
-      const lat = map.dataset.lat;
-      const lng = map.dataset.lng;
-
-      btn.addEventListener("click", () => {
-        window.open(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`);
-      });
-    }
   });
 </script>
 <script src="/js/map.js"></script>

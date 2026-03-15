@@ -57,7 +57,7 @@ router.delete("/review/:id", isSuperAdmin, async (req,res)=>{
 });
 
 //admin routes for approving/rejecting listings
-// APPROVE LISTING
+// approve listing
 router.patch("/listings/:id/approve", isLoggedIn, isAdmin, async(req,res)=>{
   await Listing.findByIdAndUpdate(req.params.id,{status:"approved"});
   req.flash("success","Listing approved");
@@ -65,7 +65,7 @@ router.patch("/listings/:id/approve", isLoggedIn, isAdmin, async(req,res)=>{
 });
 
 
-// REJECT LISTING
+// reject listing
 router.patch("/listings/:id/reject", isLoggedIn, isAdmin, async(req,res)=>{
   await Listing.findByIdAndUpdate(req.params.id,{status:"rejected"});
   req.flash("error","Listing rejected");
